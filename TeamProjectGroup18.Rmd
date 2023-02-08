@@ -11,6 +11,10 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+# Group Names
+Reed Baumgardner
+Nathan Patton
+Fadumo Hussein
 
 # Topic
 NFL Injuries
@@ -19,7 +23,7 @@ NFL Injuries
 [Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
 
 # Possible Questions
-What variables correlate positively with NFL injuries?
+What variables correlate positively with NFL injuries? (injury surface, weather, stadium type, position, etc)
 
 Is it more common to get injured in the cold/rain? Indoor/Outdoor stadiums?
 
@@ -28,6 +32,26 @@ Which variables are causing the most severe injuries (measured by days out)?
 Which position is most at risk? In which conditions?
 
 Analysis per position. Which variables are linked to the most QB injuries?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
