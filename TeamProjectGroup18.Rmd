@@ -1,0 +1,50 @@
+---
+title: "Team Project Group 18"
+output: 
+ html_document:
+  toc: true
+  toc_depth: 3
+  theme: lumen
+  code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Topic
+NFL Injuries
+
+# Possible Data Sources
+[Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
+
+# Possible Questions
+What variables correlate positively with NFL injuries?
+
+Is it more common to get injured in the cold/rain? Indoor/Outdoor stadiums?
+
+Which variables are causing the most severe injuries (measured by days out)?
+
+Which position is most at risk? In which conditions?
+
+Analysis per position. Which variables are linked to the most QB injuries?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
