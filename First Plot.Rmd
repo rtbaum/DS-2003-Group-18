@@ -1,0 +1,59 @@
+---
+title: "First Plot"
+author: "Fadumo Hussein, Reed Baumgardner, Nathan Patton"
+date: "2023-02-20"
+output: html_document
+---
+#Packages 
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(mice)
+```
+
+#Uplaod Data 
+```{r}
+InjuryRecord <- read.csv("~/Desktop/SPRING 2023/DS 2003/DS-2003-Group-18-main 3/InjuryRecord.csv", header=FALSE)
+View(InjuryRecord)
+PlayList <- read.csv("~/Desktop/SPRING 2023/DS 2003/DS-2003-Group-18-main 3/PlayList.csv")
+View(PlayList)
+```
+
+#Checking for missing values and cleaning up data 
+```{r}
+#Checking for missing values injury record 
+InjuryRecord[InjuryRecord==""] <- NA
+colSums(is.na(InjuryRecord))
+md.pattern(InjuryRecord, rotate.names = TRUE)
+str(InjuryRecord)
+
+#Checking for missing values playlist 
+
+PlayList[PlayList==""] <- NA
+colSums(is.na(PlayList))
+md.pattern(PlayList, rotate.names = TRUE)
+str(PlayList)
+
+```
+
+#Rename columns and merging table 
+```{r}
+
+InjuryRecord <- InjuryRecord%>% 
+  rename(
+    PlayerKey = V1,
+    GameID = V2,
+    PlayKey = V3,
+    BodyPart = V4,
+    Surface = V5,
+    DM_M1 = V6,
+    DM_M7 = V7, 
+    DM_M28 = V8,
+    DM_M42 = V9
+    )
+head(InjuryRecord)
+
+injuries <- merge(PlayList, InjuryRecord, by="PlayerKey")
+head(injuries)
+```
+
