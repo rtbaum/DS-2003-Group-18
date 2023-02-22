@@ -33,34 +33,115 @@ Which position is most at risk? In which conditions?
 
 Analysis per position. Which variables are linked to the most QB injuries?
 
+#Final Questions
+1. Which conditions are linked to the most and most severe injuries? 
+2. Which conditions are most/least linked to QB injuries?
 
+#Packages 
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(mice)
+library(skimr)
+library(pollster)
+library(kableExtra)
+```
 
+#Uplaod Data 
+```{r}
+InjuryRecord <- read.csv("InjuryRecord.csv")
+PlayList <- read.csv("PlayList.csv")
+```
 
+#Checking for missing values and cleaning up data 
+```{r}
+#Checking for missing values injury record 
+InjuryRecord[InjuryRecord==""] <- NA
+colSums(is.na(InjuryRecord))
+md.pattern(InjuryRecord, rotate.names = TRUE)
+str(InjuryRecord)
 
+#Checking for missing values playlist 
+PlayList[PlayList==""] <- NA
+colSums(is.na(PlayList))
+md.pattern(PlayList, rotate.names = TRUE)
+str(PlayList)
+```
 
+#Rename columns and merging table 
+```{r}
+#Joining PlayList with InjuryRecord 
+injuries <- inner_join(PlayList, InjuryRecord, by="PlayKey")
 
+#Removing duplicate columns
+injuries <- select(injuries, -c("PlayerKey.y","GameID.y","Surface", "Position", "PositionGroup"))
 
+#Renaming Columns
+injuries <- injuries %>%
+  rename("PlayerKey" = "PlayerKey.x", "GameID" = "GameID.x")
+```
 
+#More Cleaning
+```{r}
+injuries$Temperature[injuries$Temperature == -999] <- 70
+injuries$Weather[is.na(injuries$Weather) == TRUE] <- "No Weather"
+View(injuries)
+```
 
+#Merging days missed columns into one outcome column
+```{r}
+injuries <- injuries %>%
+  pivot_longer(cols = c('DM_M1', 'DM_M7', 'DM_M28', 'DM_M42'), names_to = 'Days_Missed')
+injuries <- select(injuries, -c("value"))
 
+injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M1", "1")
+injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M7", "7")
+injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M28", "28")
+injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M42", "42")
 
+for(i in (nrow(injuries)-1))
+  if(injuries[i,"Days_Missed"] < injuries[i+1,"Days_Missed"])
+    injuries <- injuries[-i,]
 
+View(injuries)
+```
 
+#Exploratory Data Analysis
+##Subsetting Variables Pertinent to Questions
+###1. Which conditions are linked to the most and most severe injuries?
+```{r}
+question1data <- injuries %>%
+  select(RosterPosition, StadiumType, FieldType, Temperature, Weather, PlayType, DM_M1, DM_M7, DM_M28, DM_M42)
+skim(injuries)
+View(question1data)
+```
+##Checking Distributions of Continuous Variables
+###Outcome Variables - Number of Games Missed (Need to do some editing and pivot longer before doing this)
+###Predictor Variables
+####Temperature
+```{r}
+ggplot(injuries, aes(Temperature)) +
+  geom_histogram(bins = 200, fill = '#540d6e') + 
+  geom_vline(aes(xintercept = mean(Temperature)),col = 'lightgray', linewidth = 1) +
+  geom_vline(aes(xintercept = median(Temperature)), col = 'lightgray', linetype = 'dashed') +
+  labs(
+    title = 'Histogram of Temperature',
+    caption = 'mean: solid line, median = dashed line'
+  ) +
+  theme_minimal()
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+##Checking for Outliers in Coninuous Variables
+```{r}
+ggplot(injuries, aes(Temperature)) +
+  geom_boxplot(fill = '#540d6e') + 
+  labs(
+    title = 'Boxplot of Temperature'
+  ) +
+  theme_minimal()
+```
+THESE GRAPHS ARE NOT GREAT BECAUSE WE STILL NEED TO DO SOME DATA CLEANING
+- WE WERE WORKING ON THAT MOST OF CLASS
 
 
 
