@@ -81,7 +81,9 @@ injuries <- injuries %>%
 
 #More Cleaning
 ```{r}
+# Temperatures for indoor stadiums were incrrectly showinf up as -999. We set it to 70 degrees based on the average on-field temperature NFL teams keep indoor stadiums. 
 injuries$Temperature[injuries$Temperature == -999] <- 70
+# Weather for indoor stadiums was set as "No Weather" for the purposes of this project
 injuries$Weather[is.na(injuries$Weather) == TRUE] <- "No Weather"
 View(injuries)
 ```
@@ -107,7 +109,7 @@ ggplot(injuries,
 ```
 #Contrubutions:
 Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
-
+Reed Baumgardner - Merging tables, removing duplicate columns and renaming columns, cleaning, additional comments on process
 
 
 
