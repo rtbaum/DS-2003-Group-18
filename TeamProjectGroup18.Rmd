@@ -59,13 +59,11 @@ PlayList <- read.csv("PlayList.csv")
 InjuryRecord[InjuryRecord==""] <- NA
 colSums(is.na(InjuryRecord))
 md.pattern(InjuryRecord, rotate.names = TRUE)
-str(InjuryRecord)
 
 #Checking for missing values playlist 
 PlayList[PlayList==""] <- NA
 colSums(is.na(PlayList))
 md.pattern(PlayList, rotate.names = TRUE)
-str(PlayList)
 ```
 
 #Rename columns and merging table 
@@ -90,21 +88,30 @@ View(injuries)
 
 #Merging days missed columns into one outcome column
 ```{r}
+#Forming a new days missed column using mutate 
 injuries <- injuries %>%
-  pivot_longer(cols = c('DM_M1', 'DM_M7', 'DM_M28', 'DM_M42'), names_to = 'Days_Missed')
-injuries <- select(injuries, -c("value"))
+  mutate(Days_Missed = ifelse(DM_M42 == 1, 42, ifelse(DM_M28 == 1, 28, ifelse(DM_M7 == 1, 7, 1))))
 
-injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M1", "1")
-injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M7", "7")
-injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M28", "28")
-injuries$Days_Missed <- str_replace(injuries$Days_Missed, "DM_M42", "42")
-
-for(i in (nrow(injuries)-1))
-  if(injuries[i,"Days_Missed"] < injuries[i+1,"Days_Missed"])
-    injuries <- injuries[-i,]
-
+#Deleting the original days missed columns
+injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
 View(injuries)
 ```
+
+#First Plot
+```{r}
+ggplot(injuries,               
+       aes(x = Temperature,           
+           y = Days_Missed,        
+           color = RosterPosition)) +   
+  geom_point(aes(shape = FieldType))
+```
+#Contrubutions:
+Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
+
+
+
+
+
 
 #Exploratory Data Analysis
 ##Subsetting Variables Pertinent to Questions
@@ -142,14 +149,3 @@ ggplot(injuries, aes(Temperature)) +
 ```
 THESE GRAPHS ARE NOT GREAT BECAUSE WE STILL NEED TO DO SOME DATA CLEANING
 - WE WERE WORKING ON THAT MOST OF CLASS
-
-
-
-
-
-
-
-
-
-
-
