@@ -86,6 +86,17 @@ injuries$Temperature[injuries$Temperature == -999] <- 70
 # Weather for indoor stadiums was set as "No Weather" for the purposes of this project
 injuries$Weather[is.na(injuries$Weather) == TRUE] <- "No Weather"
 View(injuries)
+
+#Combine weather factors into n = 5 variables 
+
+table(injuries$Weather)
+injuries$Weather <- fct_collapse(injuries$Weather, 
+                                 Clear =c("Clear", "Clear and warm", "Clear skies", "Clear Skies", "Sunny", "Mostly sunny", "Mostly Sunny"),
+                                 Cloudy =c("Cloudy", "Cloudy and Cool", "Cloudy, 50% change of rain", "Coudy", "Partly Cloudy", "Sun & clouds", "Mostly cloudy"), 
+                                 Rain =c("Cloudy with periods of rain, thunder possible. Winds shifting to WNW, 10-20 mph.", "Light Rain", "Rain", "Rain shower", "Rain", "Rain"), 
+                                 
+                                 Other =c("No Weather", "Indoor", "Indoors", "Controlled Climate", "Fair"))
+table(injuries$Weather)
 ```
 
 #Merging days missed columns into one outcome column
@@ -110,7 +121,7 @@ ggplot(injuries,
 #Contrubutions:
 Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
 Reed Baumgardner - Merging tables, removing duplicate columns and renaming columns, cleaning, additional comments on process
-
+Fadumo Hussein - Find and relabel missing data, collaping variable factors, additional comments on process
 
 
 
