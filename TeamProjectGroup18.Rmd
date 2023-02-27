@@ -85,6 +85,24 @@ injuries <- injuries %>%
 injuries$Temperature[injuries$Temperature == -999] <- 70
 # Weather for indoor stadiums was set as "No Weather" for the purposes of this project
 injuries$Weather[is.na(injuries$Weather) == TRUE] <- "No Weather"
+injuries$PlayerDay[injuries$PlayerDay==-34]<-34
+injuries$Weather[injuries$Weather==""]<- "Indoor"
+injuries$Weather[injuries$Weather=="Indoors"]<- "Indoor"
+injuries$Weather[injuries$Weather=="Controlled Climate"]<- "Indoor"
+injuries$Weather[injuries$Weather=="Clear skies"|
+                   injuries$Weather=="Clear and warm"|
+                   injuries$Weather=="Clear Skies"]<- "Clear"
+injuries$Weather[injuries$Weather=="Coudy"|
+                   injuries$Weather=="Cloudy and Cool"|
+                   injuries$Weather=="Cloudy, 50% change of rain"|
+                   injuries$Weather=="Cloudy with periods of rain, thunder possible. Winds shifting to WNW, 10-20 mph."|
+                   injuries$Weather=="Mostly cloudy"] <- "Cloudy"
+injuries$Weather[injuries$Weather=="Light Rain"|
+                   injuries$Weather=="Rain shower"]<- "Rain"
+injuries$Weather[injuries$Weather=="Mostly Sunny"|
+                   injuries$Weather=="Mostly sunny"|
+                   injuries$Weather=="Sun & clouds"]<- "Sunny"
+
 View(injuries)
 
 #Combine weather factors into n = 5 variables 
