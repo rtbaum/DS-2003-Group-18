@@ -35,7 +35,7 @@ Analysis per position. Which variables are linked to the most QB injuries?
 
 #Final Questions
 1. Which conditions are linked to the most and most severe injuries? 
-2. Which conditions are most/least linked to QB injuries?
+2. Which conditions are most/least linked to WR injuries?
 
 #Packages 
 ```{r}
@@ -81,25 +81,27 @@ injuries <- injuries %>%
 
 #More Cleaning
 ```{r}
-# Temperatures for indoor stadiums were incrrectly showinf up as -999. We set it to 70 degrees based on the average on-field temperature NFL teams keep indoor stadiums. 
+# Temperatures for indoor stadiums were incorrectly showing up as -999. We set it to 70 degrees based on the average on-field temperature NFL teams keep indoor stadiums. 
 injuries$Temperature[injuries$Temperature == -999] <- 70
+
 # Weather for indoor stadiums was set as "No Weather" for the purposes of this project
-# Cleaning Weather responses into repeatable responses and fixing other errors/NAs.
 injuries$Weather[is.na(injuries$Weather) == TRUE] <- "No Weather"
-injuries$PlayerDay[injuries$PlayerDay==-34]<-34
-injuries$Weather[injuries$Weather==""]<- "Indoor"
-injuries$Weather[injuries$Weather=="Indoors"]<- "Indoor"
-injuries$Weather[injuries$Weather=="Controlled Climate"]<- "Indoor"
+
+#Random PlayerDay was changed from -34 to 34
+injuries$PlayerDay[injuries$PlayerDay==-34] <- 34
+
+#Combining some of the weather values
+injuries$Weather[injuries$Weather==""|
+                   injuries$Weather=="Indoors"|
+                   injuries$Weather=="Controlled Climate"]<- "Indoor"
 injuries$Weather[injuries$Weather=="Clear skies"|
                    injuries$Weather=="Clear and warm"|
-                   injuries$Weather=="Clear Skies"|
-                   injuries$Weather=="Fair"|
-                   injuries$Weather == "Cold"]<- "Clear"
+                   injuries$Weather=="Clear Skies"]<- "Clear"
 injuries$Weather[injuries$Weather=="Coudy"|
                    injuries$Weather=="Cloudy and Cool"|
                    injuries$Weather=="Cloudy, 50% change of rain"|
                    injuries$Weather=="Cloudy with periods of rain, thunder possible. Winds shifting to WNW, 10-20 mph."|
-                   injuries$Weather=="Mostly cloudy" | 
+                   injuries$Weather=="Mostly cloudy"|
                    injuries$Weather=="Partly Cloudy"] <- "Cloudy"
 injuries$Weather[injuries$Weather=="Light Rain"|
                    injuries$Weather=="Rain shower"]<- "Rain"
@@ -107,6 +109,7 @@ injuries$Weather[injuries$Weather=="Mostly Sunny"|
                    injuries$Weather=="Mostly sunny"|
                    injuries$Weather=="Sun & clouds"]<- "Sunny"
 
+injuries <- na.omit(injuries)
 View(injuries)
 ```
 
@@ -121,40 +124,31 @@ injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
 View(injuries)
 ```
 
-#First Plot
+#Descriptive Statistics and Exploratory Data Analysis
+##Descriptive Statistics
 ```{r}
-ggplot(injuries,               
-       aes(x = Temperature,           
-           y = Days_Missed,        
-           color = RosterPosition)) +   
-  geom_point(aes(shape = FieldType))
+summary(injuries)
 ```
-#Contrubutions:
-Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
-Reed Baumgardner - Merging tables, removing duplicate columns and renaming columns, cleaning, additional comments on process
-Fadumo Hussein - Find and relabel missing data, collaping variable factors, additional comments on process
 
-
-
-
-#Exploratory Data Analysis
 ##Subsetting Variables Pertinent to Questions
 ###1. Which conditions are linked to the most and most severe injuries?
-
+```{r}
 question1data <- injuries %>%
-  select(RosterPosition, FieldType, Temperature, Weather, PlayType, Days_Missed)
-
-
-### Days_Missed as factor variable for grouped bar charts purposes (skip if not needed)
-question1data$Days_Missed <- as.factor(question1data$Days_Missed)
-
+  select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
 View(question1data)
+```
+
+###2. Which conditions are most/least linked to WR injuries?
+```{r}
+question2data <- question1data %>%
+  filter(RosterPosition == "Wide Receiver")
+View(question2data)
+```
 
 ##Checking Distributions of Continuous Variables
-###Outcome Variables - Number of Games Missed (Need to do some editing and pivot longer before doing this)
 ###Predictor Variables
 ####Temperature
-
+```{r}
 ggplot(injuries, aes(Temperature)) +
   geom_histogram(bins = 200, fill = '#540d6e') + 
   geom_vline(aes(xintercept = mean(Temperature)),col = 'lightgray', linewidth = 1) +
@@ -164,64 +158,61 @@ ggplot(injuries, aes(Temperature)) +
     caption = 'mean: solid line, median = dashed line'
   ) +
   theme_minimal()
+```
 
-
-##Checking for Outliers in Continuous Variables
-
-ggplot(injuries, aes(Temperature)) +
-  geom_boxplot(fill = '#540d6e') + 
-  labs(
-    title = 'Boxplot of Temperature'
-  ) +
-  theme_minimal()
-
-
-# Grouped Bar Charts
-## Grouped Bar Chart for BodyPart by Days_Missed
+#Data Visualization
+##Question 1
+### Grouped Bar Chart for BodyPart by Days_Missed
+```{r}
 ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Body Part") +
     xlab("Body Part Injured") +
     ylab("Count")
+```
 
-## Grouped Bar Chart for FieldType by Days_Missed
-
+### Grouped Bar Chart for FieldType by Days_Missed
+```{r}
 ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Field Type") +
   xlab("Field Type") +
   ylab("Count")
+```
 
-## Grouped Bar Chart for Weather by Days_Missed
-
+### Grouped Bar Chart for Weather by Days_Missed
+```{r}
 ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Weather Conditions") +
   xlab("Weather Conditions") +
   ylab("Count")
+```
 
-## Grouped Bar Chart for Position by Days_Missed
-
+### Grouped Bar Chart for Position by Days_Missed
+```{r}
 ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Position") +
   xlab("Roster Position") +
   ylab("Count")
+```
 
-## Grouped Bar Chart for Play Type by Days_Missed
-
+### Grouped Bar Chart for Play Type by Days_Missed
+```{r}
 ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Play Type") +
   xlab("Play Type") +
   ylab("Count")
+```
 
-
-
-# Link for multiple graphs on one page http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/
-
+#Contrubutions:
+Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
+Reed Baumgardner - Merging tables, removing duplicate columns and renaming columns, cleaning, additional comments on process
+Fadumo Hussein - Find and relabel missing data, collaping variable factors, additional comments on process
