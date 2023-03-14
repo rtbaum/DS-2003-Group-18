@@ -108,6 +108,10 @@ injuries$Weather[injuries$Weather=="Light Rain"|
 injuries$Weather[injuries$Weather=="Mostly Sunny"|
                    injuries$Weather=="Mostly sunny"|
                    injuries$Weather=="Sun & clouds"]<- "Sunny"
+injuries$PlayType[injuries$PlayType=="Kickoff Not Returned"|
+                    injuries$PlayType=="Kickoff Returned"] <- "Kickoff"
+injuries$PlayType[injuries$PlayType=="Punt Not Returned"|
+                    injuries$PlayType=="Punt Returned"]<- "Punt"
 
 injuries <- na.omit(injuries)
 View(injuries)
@@ -161,56 +165,108 @@ ggplot(injuries, aes(Temperature)) +
 ```
 
 #Data Visualization
-##Question 1
-### Grouped Bar Chart for BodyPart by Days_Missed
-```{r}
-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
+# Question 1 Grouped Bar Charts
+## Grouped Bar Chart for BodyPart by Days_Missed
+a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Body Part") +
     xlab("Body Part Injured") +
     ylab("Count")
-```
 
-### Grouped Bar Chart for FieldType by Days_Missed
-```{r}
-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
+
+## Grouped Bar Chart for FieldType by Days_Missed
+
+a2<-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Field Type") +
   xlab("Field Type") +
   ylab("Count")
-```
 
-### Grouped Bar Chart for Weather by Days_Missed
-```{r}
-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
+## Grouped Bar Chart for Weather by Days_Missed
+
+a3<-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Weather Conditions") +
   xlab("Weather Conditions") +
   ylab("Count")
-```
 
-### Grouped Bar Chart for Position by Days_Missed
-```{r}
-ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
+## Grouped Bar Chart for Position by Days_Missed
+
+a4<-ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Position") +
   xlab("Roster Position") +
-  ylab("Count")
-```
+  ylab("Count")+
+  theme(axis.text.x = element_text(angle=60, vjust=0.5))
 
-### Grouped Bar Chart for Play Type by Days_Missed
-```{r}
-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
+## Grouped Bar Chart for Play Type by Days_Missed
+
+a5<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Play Type") +
   xlab("Play Type") +
   ylab("Count")
-```
+  
+## Making Grid
+library(cowplot)
+
+q1grid <- plot_grid(a1,a2,a3,a5,a4, 
+          labels = c("A", "B", "C","D","E"),
+          ncol = 2, nrow = 3)
+q1grid
+
+
+
+# Question 2 Graphs
+
+## Grouped Bar Chart for BodyPart by Days_Missed
+b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Count of Days Missed by Body Part") +
+  xlab("Body Part Injured") +
+  ylab("Count")
+
+
+## Grouped Bar Chart for FieldType by Days_Missed
+
+b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Count of Days Missed by Field Type") +
+  xlab("Field Type") +
+  ylab("Count")
+
+## Grouped Bar Chart for Weather by Days_Missed
+
+b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Count of Days Missed by Weather Conditions") +
+  xlab("Weather Conditions") +
+  ylab("Count")
+
+## Grouped Bar Chart for Play Type by Days_Missed
+b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
+  geom_bar(position = "dodge") +
+  labs(
+    title = "Count of Days Missed by Play Type") +
+  xlab("Play Type") +
+  ylab("Count")
+
+q2grid <- plot_grid(b1,b2,b3,b4, 
+                    labels = c("A", "B", "C","D"),
+                    ncol = 2, nrow = 2)
+q2grid
+
+
+
+
 
 #Contrubutions:
 Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
