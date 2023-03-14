@@ -1,5 +1,6 @@
 ---
 title: "Team Project Group 18"
+author: "Nathan Patton, Reed Baumgardner, Fadumo Hussein"
 output: 
  html_document:
   toc: true
@@ -7,37 +8,10 @@ output:
   theme: lumen
   code_folding: show
 ---
+# Executive Summary
+This document outlines the 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-# Group Names
-Reed Baumgardner
-Nathan Patton
-Fadumo Hussein
-
-# Topic
-NFL Injuries
-
-# Possible Data Sources
-[Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
-
-# Possible Questions
-What variables correlate positively with NFL injuries? (injury surface, weather, stadium type, position, etc)
-
-Is it more common to get injured in the cold/rain? Indoor/Outdoor stadiums?
-
-Which variables are causing the most severe injuries (measured by days out)?
-
-Which position is most at risk? In which conditions?
-
-Analysis per position. Which variables are linked to the most QB injuries?
-
-#Final Questions
-1. Which conditions are linked to the most and most severe injuries? 
-2. Which conditions are most/least linked to WR injuries?
-
-#Packages 
+# Report Dependencies
 ```{r}
 library(tidyverse)
 library(ggplot2)
@@ -45,52 +19,47 @@ library(mice)
 library(skimr)
 library(pollster)
 library(kableExtra)
+library(cowplot)
 ```
 
-#Uplaod Data 
+# Establishing Data Set
+[Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
 ```{r}
+#Loading in the data from local files
 InjuryRecord <- read.csv("InjuryRecord.csv")
 PlayList <- read.csv("PlayList.csv")
-```
 
-#Checking for missing values and cleaning up data 
-```{r}
-#Checking for missing values injury record 
+#Cleaning Data
+##Checking for missing values injury record 
 InjuryRecord[InjuryRecord==""] <- NA
 colSums(is.na(InjuryRecord))
 md.pattern(InjuryRecord, rotate.names = TRUE)
 
-#Checking for missing values playlist 
+##Checking for missing values playlist 
 PlayList[PlayList==""] <- NA
 colSums(is.na(PlayList))
 md.pattern(PlayList, rotate.names = TRUE)
-```
 
-#Rename columns and merging table 
-```{r}
-#Joining PlayList with InjuryRecord 
+##Joining PlayList with InjuryRecord 
 injuries <- inner_join(PlayList, InjuryRecord, by="PlayKey")
 
-#Removing duplicate columns
+##Removing duplicate columns
 injuries <- select(injuries, -c("PlayerKey.y","GameID.y","Surface", "Position", "PositionGroup"))
 
-#Renaming Columns
+##Renaming Columns
 injuries <- injuries %>%
   rename("PlayerKey" = "PlayerKey.x", "GameID" = "GameID.x")
-```
 
-#More Cleaning
-```{r}
-# Temperatures for indoor stadiums were incorrectly showing up as -999. We set it to 70 degrees based on the average on-field temperature NFL teams keep indoor stadiums. 
+##Temperatures for indoor stadiums were incorrectly showing up as -999. We set it to 70 degrees based on the average on-field temperature NFL teams keep indoor stadiums. 
 injuries$Temperature[injuries$Temperature == -999] <- 70
 
-# Weather for indoor stadiums was set as "No Weather" for the purposes of this project
+##Weather for indoor stadiums was set as "No Weather" for the purposes of this project
 injuries$Weather[is.na(injuries$Weather) == TRUE] <- "No Weather"
 
-#Random PlayerDay was changed from -34 to 34
+##Random PlayerDay was changed from -34 to 34
 injuries$PlayerDay[injuries$PlayerDay==-34] <- 34
 
-#Combining some of the weather values
+##Combining some of the weather values
 injuries$Weather[injuries$Weather==""|
                    injuries$Weather=="Indoors"|
                    injuries$Weather=="Controlled Climate"]<- "Indoor"
@@ -108,50 +77,53 @@ injuries$Weather[injuries$Weather=="Light Rain"|
 injuries$Weather[injuries$Weather=="Mostly Sunny"|
                    injuries$Weather=="Mostly sunny"|
                    injuries$Weather=="Sun & clouds"]<- "Sunny"
+
+##Combining PlayType Variables
 injuries$PlayType[injuries$PlayType=="Kickoff Not Returned"|
                     injuries$PlayType=="Kickoff Returned"] <- "Kickoff"
 injuries$PlayType[injuries$PlayType=="Punt Not Returned"|
                     injuries$PlayType=="Punt Returned"]<- "Punt"
 
 injuries <- na.omit(injuries)
-View(injuries)
-```
 
-#Merging days missed columns into one outcome column
-```{r}
-#Forming a new days missed column using mutate 
+##Forming a new days missed column using mutate 
 injuries <- injuries %>%
   mutate(Days_Missed = ifelse(DM_M42 == 1, 42, ifelse(DM_M28 == 1, 28, ifelse(DM_M7 == 1, 7, 1))))
 
-#Deleting the original days missed columns
+##Deleting the original days missed columns
 injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
 View(injuries)
 ```
 
-#Descriptive Statistics and Exploratory Data Analysis
-##Descriptive Statistics
+#Background and Questions
+## Background
+
+## Questions
+1. Which conditions are linked to the most and most severe injuries? 
+2. Which conditions are most/least linked to WR injuries?
+
+# Descriptive Statistics and Exploratory Data Analysis
+## Descriptive Statistics
 ```{r}
 summary(injuries)
 ```
 
-##Subsetting Variables Pertinent to Questions
-###1. Which conditions are linked to the most and most severe injuries?
+## Exploratory Data Analysis
+###Subsetting Variables Pertinent to Questions
 ```{r}
+#1. Which conditions are linked to the most and most severe injuries? 
 question1data <- injuries %>%
   select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
 View(question1data)
-```
 
-###2. Which conditions are most/least linked to WR injuries?
-```{r}
+#2. Which conditions are most/least linked to WR injuries?
 question2data <- question1data %>%
   filter(RosterPosition == "Wide Receiver")
 View(question2data)
 ```
 
-##Checking Distributions of Continuous Variables
-###Predictor Variables
-####Temperature
+### Checking Distributions of Continuous Variables
+#### Predictor Variable: Temperature
 ```{r}
 ggplot(injuries, aes(Temperature)) +
   geom_histogram(bins = 200, fill = '#540d6e') + 
@@ -164,111 +136,117 @@ ggplot(injuries, aes(Temperature)) +
   theme_minimal()
 ```
 
-#Data Visualization
-# Question 1 Grouped Bar Charts
+# Question 1 Plots and Narrative
 ## Grouped Bar Chart for BodyPart by Days_Missed
-a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
+```{r}
+ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Body Part") +
     xlab("Body Part Injured") +
     ylab("Count")
-
+```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-
-a2<-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
+```{r}
+ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Field Type") +
   xlab("Field Type") +
   ylab("Count")
+```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-
-a3<-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
+```{r}
+ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Weather Conditions") +
   xlab("Weather Conditions") +
   ylab("Count")
+```
 
 ## Grouped Bar Chart for Position by Days_Missed
-
-a4<-ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
+```{r}
+ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Position") +
   xlab("Roster Position") +
-  ylab("Count")+
-  theme(axis.text.x = element_text(angle=60, vjust=0.5))
+  ylab("Count")
+```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
-
-a5<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
+```{r}
+ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Play Type") +
   xlab("Play Type") +
   ylab("Count")
-  
-## Making Grid
-library(cowplot)
+```
 
+## Combined Chart
+```{r}
 q1grid <- plot_grid(a1,a2,a3,a5,a4, 
           labels = c("A", "B", "C","D","E"),
           ncol = 2, nrow = 3)
 q1grid
+```
 
 
-
-# Question 2 Graphs
-
+# Question 2 Plots and Narrative
 ## Grouped Bar Chart for BodyPart by Days_Missed
+
+```{r}
 b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Body Part") +
   xlab("Body Part Injured") +
   ylab("Count")
-
+```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-
+```{r}
 b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Field Type") +
   xlab("Field Type") +
   ylab("Count")
+```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-
+```{r}
 b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Weather Conditions") +
   xlab("Weather Conditions") +
   ylab("Count")
+```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
+```{r}
 b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Play Type") +
   xlab("Play Type") +
   ylab("Count")
+```
 
+## Combined Chart
+```{r}
 q2grid <- plot_grid(b1,b2,b3,b4, 
                     labels = c("A", "B", "C","D"),
                     ncol = 2, nrow = 2)
 q2grid
+```
 
-
-
-
-
-#Contrubutions:
+# Contrubutions:
 Nathan Patton - Renaming columns and merging tables, cleaning, mutating days missed columns into one, and the first plot
 Reed Baumgardner - Merging tables, removing duplicate columns and renaming columns, cleaning, additional comments on process
 Fadumo Hussein - Find and relabel missing data, collaping variable factors, additional comments on process
