@@ -135,6 +135,8 @@ ggplot(injuries, aes(Temperature)) +
   ) +
   theme_minimal()
 ```
+# Color Palette 
+pal = c("#8CB369","#2191FB","#F4A259","#BC4B51")
 
 # Question 1 Plots and Narrative
 ## Grouped Bar Chart for BodyPart by Days_Missed
@@ -144,7 +146,9 @@ ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Body Part") +
     xlab("Body Part Injured") +
-    ylab("Count")
+    ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
@@ -154,7 +158,9 @@ ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Field Type") +
   xlab("Field Type") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
@@ -164,7 +170,9 @@ ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Weather Conditions") +
   xlab("Weather Conditions") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for Position by Days_Missed
@@ -174,7 +182,9 @@ ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Position") +
   xlab("Roster Position") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
@@ -184,7 +194,9 @@ ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Play Type") +
   xlab("Play Type") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Combined Chart
@@ -205,7 +217,9 @@ b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Body Part") +
   xlab("Body Part Injured") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
@@ -215,7 +229,9 @@ b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Field Type") +
   xlab("Field Type") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
@@ -225,7 +241,9 @@ b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Weather Conditions") +
   xlab("Weather Conditions") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
@@ -235,7 +253,9 @@ b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
   labs(
     title = "Count of Days Missed by Play Type") +
   xlab("Play Type") +
-  ylab("Count")
+  ylab("Count")+ 
+  scale_fill_manual(values=pal)+
+  theme_minimal()
 ```
 
 ## Combined Chart
