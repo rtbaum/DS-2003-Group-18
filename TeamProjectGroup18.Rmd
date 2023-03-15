@@ -99,10 +99,24 @@ View(injuries)
 #Subsetting variables pertinent to questions and creating data dictionaries
 question1data <- injuries %>%
   select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
-create_dictionary(question1data)
+injury.labels <- c(RosterPosition = "This is the position the athlete has on the football team",
+         BodyPart = "This varaible records where the injury took place on the body",
+         StadiumType = "The playing surface of the field when the injury occured",
+         Temperature = "Temputre recorded when the injury took place in Farhenheit",
+         Weather = "Type of weather record when the injury took place",
+         PlayType = "Description of the play type when injury was recorded", 
+         Days_Missed = "Measured the number of days missed due to injury")
+     create_dictionary(question1data, var_labels =  injury.labels)
 question2data <- question1data %>%
   filter(RosterPosition == "Wide Receiver")
-create_dictionary(question2data)
+injury.labels <- c(RosterPosition = "This is the position the athlete has on the football team",
+         BodyPart = "This varaible records where the injury took place on the body",
+         StadiumType = "The playing surface of the field when the injury occured",
+         Temperature = "Temputre recorded when the injury took place in Farhenheit",
+         Weather = "Type of weather record when the injury took place",
+         PlayType = "Description of the play type when injury was recorded", 
+         Days_Missed = "Measured the number of days missed due to injury")
+     create_dictionary(question2data, var_labels =  injury.labels)
 ```
 
 #Background and Questions
