@@ -8,8 +8,9 @@ output:
   theme: lumen
   code_folding: show
 ---
+
 # Executive Summary
-This document outlines the 
+One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were.... 
 
 # Report Dependencies
 ```{r}
@@ -85,7 +86,6 @@ injuries$PlayType[injuries$PlayType=="Kickoff Not Returned"|
                     injuries$PlayType=="Kickoff Returned"] <- "Kickoff"
 injuries$PlayType[injuries$PlayType=="Punt Not Returned"|
                     injuries$PlayType=="Punt Returned"]<- "Punt"
-
 injuries <- na.omit(injuries)
 
 ##Forming a new days missed column using mutate 
@@ -96,16 +96,13 @@ injuries <- injuries %>%
 injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
 View(injuries)
 
+#Subsetting variables pertinent to questions and creating data dictionaries
 question1data <- injuries %>%
   select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
-
 create_dictionary(question1data)
-
 question2data <- question1data %>%
   filter(RosterPosition == "Wide Receiver")
-
 create_dictionary(question2data)
-
 ```
 
 #Background and Questions
@@ -128,14 +125,12 @@ summary(injuries)
 question1data <- injuries %>%
   select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
 View(question1data)
-
 summary(question1data)
 
 #2. Which conditions are most/least linked to WR injuries?
 question2data <- question1data %>%
   filter(RosterPosition == "Wide Receiver")
 View(question2data)
-
 summary(question2data)
 ```
 
