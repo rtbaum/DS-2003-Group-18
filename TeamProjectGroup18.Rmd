@@ -107,9 +107,10 @@ create_dictionary(question2data)
 
 #Background and Questions
 ## Background
+This dataset was created by the National Football League (NFL) for a Kaggle-based analytics competition named "NFL 1st and Future - Analytics." The purpose of this competition was to "investigate the relationship between the playing surface and the injury and performance of NFL athletes." The inspiration for the competition was the recent investigations into the higher rate of injuries to NFL players on synthetic turf compared to that on natural turf. As a group, we were interested in sports and health, and this dataset was a reputable intersection of the two. In one of the nation's most profitable, yet dangerous, sports leagues, the risk of investment into a player can be lowered if steps continue to be taken to ensure player safety. While NFL player health is the foremost reason for the creation of this competition and dataset, we believe that conclusions from our analysis can be beneficial to the youth ranks of football as well. Keeping the children safe on the field was an important motivation for our analysis.  Our questions were stemmed from the NFL's own questions about safety. Our first question was an obvious one to come to. We wanted to explore all the variables in the dataset to find which ones were contributing most to injuries, especially severe ones that are career and sometimes life changing. Our second question was derived more specifically as we wanted to look into one of the NFL's most injury-prone positions-- Wide Receivers. This position group are some of the highest paid in the league and also one of the positions that are the most affected long-term by injuries as speed, agility, and sharpness are absolute keys to their success. These factors led us to focusing an analysis on just the wide receivers.
 
 ## Questions
-1. Which conditions are linked to the most and most severe injuries? 
+1. Which conditions are linked to the most severe injuries?  
 2. Which conditions are most/least linked to WR injuries?
 
 # Descriptive Statistics and Exploratory Data Analysis
