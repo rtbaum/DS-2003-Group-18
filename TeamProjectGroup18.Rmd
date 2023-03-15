@@ -20,6 +20,8 @@ library(skimr)
 library(pollster)
 library(kableExtra)
 library(cowplot)
+library(datadictionary)
+library(pastecs)
 ```
 
 # Establishing Data Set
@@ -93,6 +95,17 @@ injuries <- injuries %>%
 ##Deleting the original days missed columns
 injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
 View(injuries)
+
+question1data <- injuries %>%
+  select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
+
+create_dictionary(question1data)
+
+question2data <- question1data %>%
+  filter(RosterPosition == "Wide Receiver")
+
+create_dictionary(question2data)
+
 ```
 
 #Background and Questions
@@ -116,10 +129,14 @@ question1data <- injuries %>%
   select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
 View(question1data)
 
+summary(question1data)
+
 #2. Which conditions are most/least linked to WR injuries?
 question2data <- question1data %>%
   filter(RosterPosition == "Wide Receiver")
 View(question2data)
+
+summary(question2data)
 ```
 
 ### Checking Distributions of Continuous Variables
