@@ -13,7 +13,10 @@ output:
 One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were.... 
 
 # Report Dependencies
-```{r message = FALSE}
+
+```{r setup, include=FALSE} 
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
 library(tidyverse)
 library(ggplot2)
 library(mice)
@@ -27,7 +30,7 @@ library(pastecs)
 
 # Establishing Data Set
 [Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
-```{r warning = FALSE}
+```{r}
 #Loading in the data from local files
 InjuryRecord <- read.csv("InjuryRecord.csv")
 PlayList <- read.csv("PlayList.csv")
@@ -199,7 +202,7 @@ ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-```{r warning = FALSE}
+```{r}
 ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -211,7 +214,7 @@ ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-```{r warning = FALSE}
+```{r}
 ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -223,7 +226,7 @@ ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Position by Days_Missed
-```{r warning = FALSE}
+```{r}
 ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -235,7 +238,7 @@ ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
-```{r warning = FALSE}
+```{r}
 ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -247,7 +250,7 @@ ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Combined Chart
-```{r warning = FALSE}
+```{r}
 q1grid <- plot_grid(a1,a2,a3,a5,a4, 
           labels = c("A", "B", "C","D","E"),
           ncol = 2, nrow = 3)
@@ -264,7 +267,7 @@ q1grid
 # Question 2 Plots and Narrative
 ## Grouped Bar Chart for BodyPart by Days_Missed
 
-```{r warning = FALSE}
+```{r}
 b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -276,7 +279,7 @@ b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-```{r warning = FALSE}
+```{r}
 b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -288,7 +291,7 @@ b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-```{r warning = FALSE}
+```{r}
 b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -300,7 +303,7 @@ b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
-```{r warning = FALSE}
+```{r}
 b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -312,7 +315,7 @@ b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Combined Chart
-```{r r warning = FALSE}
+```{r r}
 q2grid <- plot_grid(b1,b2,b3,b4, 
                     labels = c("A", "B", "C","D"),
                     ncol = 2, nrow = 2)
