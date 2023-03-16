@@ -13,7 +13,7 @@ output:
 One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were.... 
 
 # Report Dependencies
-```{r}
+```{r message = FALSE}
 library(tidyverse)
 library(ggplot2)
 library(mice)
@@ -27,7 +27,7 @@ library(pastecs)
 
 # Establishing Data Set
 [Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
-```{r}
+```{r warning = FALSE}
 #Loading in the data from local files
 InjuryRecord <- read.csv("InjuryRecord.csv")
 PlayList <- read.csv("PlayList.csv")
@@ -187,7 +187,7 @@ pal = c("#8CB369","#2191FB","#F4A259","#BC4B51")
 ```
 
 ## Grouped Bar Chart for BodyPart by Days_Missed
-```{r}
+```{r warning = FALSE}
 ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -199,7 +199,7 @@ ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-```{r}
+```{r warning = FALSE}
 ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -211,7 +211,7 @@ ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-```{r}
+```{r warning = FALSE}
 ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -223,7 +223,7 @@ ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Position by Days_Missed
-```{r}
+```{r warning = FALSE}
 ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -235,7 +235,7 @@ ggplot(question1data, aes(x=RosterPosition, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
-```{r}
+```{r warning = FALSE}
 ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -247,18 +247,24 @@ ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Combined Chart
-```{r}
+```{r warning = FALSE}
 q1grid <- plot_grid(a1,a2,a3,a5,a4, 
           labels = c("A", "B", "C","D","E"),
           ncol = 2, nrow = 3)
 q1grid
 ```
+## Narrative 
+
+#The count of days was higher on plays that took place on the synthetic field rather than natural fields. A play that took the place on cloudy days led to longer injury days. Plays that led to athletes having more missed days were passes. The position that has most days out due to injury, is linebacker. Finally, athletes who injured their knees were out the longest.  
+
+#If our stakeholders aim to ensure the quality and health of athletes, we should be looking at potentially several solutions to resolve patterns observed in the bar graphs—the major one being rescheduling football games when conditions are cloudy. The next potential solution is playing on natural turf instead of synthetic turf.  Athletic trainers could reevaluate current conditioning plans to ensure athletes are not potentially over or under-training.  In regards to linebackers, we can ask to see if the NFL would create harsher penalties. For example, changing the unnecessary rule from a loss of 15 yards to 20 yards could potentially disincentivize athletes from doing rougher plays. 
+
 
 
 # Question 2 Plots and Narrative
 ## Grouped Bar Chart for BodyPart by Days_Missed
 
-```{r}
+```{r warning = FALSE}
 b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -270,7 +276,7 @@ b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-```{r}
+```{r warning = FALSE}
 b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -282,7 +288,7 @@ b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-```{r}
+```{r warning = FALSE}
 b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -294,7 +300,7 @@ b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
-```{r}
+```{r warning = FALSE}
 b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
@@ -306,13 +312,23 @@ b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
 ```
 
 ## Combined Chart
-```{r}
+```{r r warning = FALSE}
 q2grid <- plot_grid(b1,b2,b3,b4, 
                     labels = c("A", "B", "C","D"),
                     ncol = 2, nrow = 2)
 q2grid
 ```
+
+## Narrative 
+
+#We focused our next question on wide receivers. Once again we wanted to focus on this group of athletes due to How injury prone this role is. Injuries to the ankle cause these athletes to sit out for the longest.  there was no difference in field types.  however similar to the first set of combined graphs,  play that took place in cloudy weather led to longer injury days. Finally, plays that were a pass also led to wide receivers being out the longest. 
+
+As stayed similarly before knowing our stakeholders and their goal to protect the health and wealth of our players here are potential solutions for wide receivers. The first would be to reschedule football games if the weather is cloudy.  another solution can be creating harsher penalties.  Finally, we can be looking at Having wide receivers wear ankle braces to ensure the stability of their ankles. However, we do recognize that adding any potential weight to them will slow their speed down.
+
+
 # Summary
+
+Our goal in this report is to ultimately give insight as to how we can ensure the safety of athletes.  This was our intent in each step of this report whether it be data cleaning looking at data descriptives and building plots that can give us insight but also potential solutions on how to keep athletes safe. A major finding was cloudy days and passes both had very high days missed. Injuries were high as well however varied based on position. Overall looking at the data we feel confident that we were able to answer both questions and additionally provide potential solutions to limit the risk of injury for players in the NFL.
 
 # Citations
 [STHDA (help with plot_grid())](http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/)
