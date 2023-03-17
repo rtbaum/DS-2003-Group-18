@@ -9,11 +9,14 @@ output:
   code_folding: show
 ---
 # Executive Summary
-One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were.... 
+One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were that synthetic turf is more dangerous for football players overall, as popularly believed, but this is not the case for every position, Additionally, rainy conditions did not play as big of a role in creating major injuries than is widely believed. We found passing plays to be more dangerous than other plays, and also that injuries to the knee tend to keep football players out for the longest amount of time.
 
-# Report Dependencies
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+# Report Dependencies
+```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(mice)
@@ -98,8 +101,11 @@ injuries <- injuries %>%
 ##Deleting the original days missed columns
 injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
 
+##Making Days_Missed a factor variable
+injuries$Days_Missed <- as.factor(injuries$Days_Missed)
+
 question1data <- injuries %>%
-  select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, Days_Missed)
+  select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, FieldType, Days_Missed)
 
 create_dictionary(question1data)
 
@@ -118,14 +124,14 @@ This dataset was created by the National Football League (NFL) for a Kaggle-base
 
 # Descriptive Statistics and Exploratory Data Analysis
 ## Descriptive Statistics
-### Seen below are a few descriptive statistics for the data necessary for answering question 1. There are five character variables, including RosterPosition, BodyPart, StadiumType, Weather and PlayType. Additionally, there are two numeric variables, inclduing temperature and Days_Missed. Temperature is a continuous predictor variable, which can be seen in the Exploratory Data Analysis section, and Days_Missed is the discrete outcome variable that is being analyzed. Some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. These statistics will play a role in the future narratives.
+Seen below are a few descriptive statistics for the data necessary for answering question 1. There are six character variables, including RosterPosition, BodyPart, StadiumType, Weather, PlayType and FieldType. Additionally, there are two numeric variables, including temperature and Days_Missed. Temperature is a continuous predictor variable, which can be seen in the Exploratory Data Analysis section, and Days_Missed is the discrete outcome variable that is being analyzed. Some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. These statistics will play a role in the future narratives.
 
 ```{r}
 #Question 1 data (all positions)
 summary(question1data)
 ```
 
-### Seen below are a few descriptive statistic for the data necessary for answering question 2. The variables included are the same as for question one, but the only RosterPosition is wide receiver. Once again, some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. Notice how values vary compared to the question 1 data. For example, the mean Days_Missed for the wide receiver postion is 10.93, whereas for all the positions combined it is almost twice as long at 17.96. This may suggest the wide receivers often miss less time when injured compared to some of the other roster positions.
+Seen below are a few descriptive statistic for the data necessary for answering question 2. The variables included are the same as for question one, but the only RosterPosition is wide receiver. Once again, some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. Notice how values vary compared to the question 1 data. For example, the mean Days_Missed for the wide receiver position is 10.93, whereas for all the positions combined it is almost twice as long at 17.96. This may suggest the wide receivers often miss less time when injured compared to some of the other roster positions.
 
 ```{r}
 #Question 2 data (WR only)
@@ -234,6 +240,11 @@ q1grid <- plot_grid(a1,a2,a3,a4,
 q1grid
 ```
 
+## Narrative 
+
+The first thing to notice is that synthetic turf seems to lead to more severe injuries than natural turf. This is the common thought among NFL players, coaches and fans. A play that took the place in rainy conditions did not lead to longer injury days as many may expect. Plays that led to athletes having more missed days were passes. From the graphs we can also see that athletes who injured their knees were out the longest, likely due to damage done to the cruciate ligaments in the knee.  
+If our stakeholders aim to ensure the quality and health of athletes, we should be looking at potentially several solutions to resolve patterns observed in the bar graphs. One potential solution is playing on natural turf instead of synthetic turf.  Athletic trainers could reevaluate current conditioning plans to ensure athletes are not potentially over or under-training.  In regards to injuries overall, we can suggest the NFL create harsher penalties. For example, changing the unnecessary rule from a loss of 15 yards to 20 or 25 yards could potentially dis-incentivize athletes from engaging in more dangerous plays. 
+
 # Question 2 Plots and Narrative
 ## Grouped Bar Chart for BodyPart by Days_Missed
 
@@ -294,12 +305,12 @@ q2grid
 
 ## Narrative 
 
-We focused our next question on wide receivers. Once again we wanted to focus on this group of athletes due to How injury prone this role is. Injuries to the ankle cause these athletes to sit out for the longest.  there was no difference in field types.  however similar to the first set of combined graphs,  play that took place in cloudy weather led to longer injury days. Finally, plays that were a pass also led to wide receivers being out the longest. 
+We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause recievers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibilty or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the longest, which makes sense because these are the pays where wide recievers are seeing the most action.
 
-As stayed similarly before knowing our stakeholders and their goal to protect the health and wealth of our players here are potential solutions for wide receivers. The first would be to reschedule football games if the weather is cloudy.  another solution can be creating harsher penalties.  Finally, we can be looking at Having wide receivers wear ankle braces to ensure the stability of their ankles. However, we do recognize that adding any potential weight to them will slow their speed down.
+Knowing our stakeholders and their goal to protect the health of our players, here are potential solutions for wide receivers. One solution can be creating harsher penalties for unecessary roughness on the field, as discussed earlier.  Additionally, we can be looking at having wide receivers wear ankle braces to ensure the stability of their ankles. However, we do recognize that adding any potential weight to them will slow their speed down.
 
 # Summary
-Our goal in this report is to ultimately give insight as to how we can ensure the safety of athletes.  This was our intent in each step of this report whether it be data cleaning looking at data descriptives and building plots that can give us insight but also potential solutions on how to keep athletes safe. A major finding was cloudy days and passes both had very high days missed. Injuries were high as well however varied based on position. Overall looking at the data we feel confident that we were able to answer both questions and additionally provide potential solutions to limit the risk of injury for players in the NFL.
+Our goal in this report is to ultimately give insight as to how we can ensure the safety of athletes.  This was our intent in each step of this report whether it be data cleaning looking at data descriptives and building plots that can give us insight but also potential solutions on how to keep athletes safe. A major finding was that rainy conditions did not play as big of a role in creating major injuries than we would have expected. This may suggest that less football games, mostly in the youth ranks of the game, need to be cancelled due to rain (sorry to the parents who will have to do laundry after!). We also found that passing plays resulted in more serious injuries. This knowledge can inform NFL coaches on the elevated risk of passing plays, possibly decreasing their frequency in a gameplan for a team more concerned with injuries. It may also be important to limit the amount of passing plays in the youth ranks of the game to better protect our young athletes. Another finding was that while synthetic turf may be more dangerous overall, it did not show itself to be more dangerous for specifically wide receivers. We would still suggest, however, the NFL move away from synthetic turf fields and youth teams avoid playing on synthetic turf as well. Overall, looking at the data, we feel confident that we were able to answer both of our questions and additionally provide potential solutions to limit the risk of injury for football players not only in the NFL, but across all ages.
 
 # Citations
 [STHDA (help with plot_grid())](http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/)
