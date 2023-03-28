@@ -4,7 +4,7 @@ author: "Nathan Patton, Reed Baumgardner, Fadumo Hussein"
 output: 
  html_document:
   toc: true
-  toc_depth: 3
+  toc_float: true
   theme: lumen
   code_folding: show
 ---
@@ -26,6 +26,8 @@ library(kableExtra)
 library(cowplot)
 library(datadictionary)
 library(pastecs)
+library(skimr)
+library(plotly)
 ```
 
 # Establishing Data Set
@@ -34,37 +36,28 @@ library(pastecs)
 #Loading in the data from local files
 InjuryRecord <- read.csv("InjuryRecord.csv")
 PlayList <- read.csv("PlayList.csv")
-
 #Cleaning Data
 ##Checking for missing values injury record 
 InjuryRecord[InjuryRecord==""] <- NA
 colSums(is.na(InjuryRecord))
 md.pattern(InjuryRecord, rotate.names = TRUE)
-
 ##Checking for missing values playlist 
 PlayList[PlayList==""] <- NA
 colSums(is.na(PlayList))
 md.pattern(PlayList, rotate.names = TRUE)
-
 ##Joining PlayList with InjuryRecord 
 injuries <- inner_join(PlayList, InjuryRecord, by="PlayKey")
-
 ##Removing duplicate columns
 injuries <- select(injuries, -c("PlayerKey.y","GameID.y","Surface", "Position", "PositionGroup"))
-
 ##Renaming Columns
 injuries <- injuries %>%
   rename("PlayerKey" = "PlayerKey.x", "GameID" = "GameID.x")
-
 ##Temperatures for indoor stadiums were incorrectly showing up as -999. We set it to 70 degrees based on the average on-field temperature NFL teams keep indoor stadiums. 
 injuries$Temperature[injuries$Temperature == -999] <- 70
-
 ##Weather for indoor stadiums was set as "Indoor" for the purposes of this project
 injuries$Weather[is.na(injuries$Weather) == TRUE] <- "Indoor"
-
 ##Random PlayerDay was changed from -34 to 34
 injuries$PlayerDay[injuries$PlayerDay==-34] <- 34
-
 ##Combining some of the weather values
 injuries$Weather[injuries$Weather==""|
                    injuries$Weather=="Indoors"|
@@ -85,58 +78,68 @@ injuries$Weather[injuries$Weather=="Light Rain"|
 injuries$Weather[injuries$Weather=="Mostly Sunny"|
                    injuries$Weather=="Mostly sunny"|
                    injuries$Weather=="Sun & clouds"]<- "Sunny"
-
 ##Combining PlayType Variables
 injuries$PlayType[injuries$PlayType=="Kickoff Not Returned"|
                     injuries$PlayType=="Kickoff Returned"] <- "Kickoff"
 injuries$PlayType[injuries$PlayType=="Punt Not Returned"|
                     injuries$PlayType=="Punt Returned"]<- "Punt"
-
 injuries <- na.omit(injuries)
-
 ##Forming a new days missed column using mutate 
 injuries <- injuries %>%
   mutate(Days_Missed = ifelse(DM_M42 == 1, 42, ifelse(DM_M28 == 1, 28, ifelse(DM_M7 == 1, 7, 1))))
-
 ##Deleting the original days missed columns
 injuries <- select(injuries, -c("DM_M1","DM_M7","DM_M28","DM_M42"))
-
 ##Making Days_Missed a factor variable
 injuries$Days_Missed <- as.factor(injuries$Days_Missed)
-
 question1data <- injuries %>%
   select(RosterPosition, BodyPart, StadiumType, Temperature, Weather, PlayType, FieldType, Days_Missed)
-
-create_dictionary(question1data)
-
 question2data <- question1data %>%
   filter(RosterPosition == "Wide Receiver")
-
-create_dictionary(question2data)
 ```
 
-## Background
+```{r}
+football_info <- tribble(
+  ~ name, ~ description,
+  "`RosterPosition`", "Player's postion on the team ",
+  "`BodyPart`", "Injuried part of the body.",
+  "`StadiumType`", "Description of the stadium type",
+  "`Temperature`", "On-field temperature at the start of the game.",
+  "`Weather`", "Weather at the stadium", 
+  "`PlayType`", "Description of the play when the injury was recorded", 
+  "`FieldType`", "Type of field when injury was recorded",
+  "`Days_Missed`", "Number of days missed after an injury")
+kable(
+  football_info,
+  format = "html",
+  col.names = c("", "")
+) %>%
+  group_rows(index = c("Data Dictionary")) %>%
+  kable_styling(bootstrap_options = c("hover"))
+```
+
+# Background
 This dataset was created by the National Football League (NFL) for a Kaggle-based analytics competition named "NFL 1st and Future - Analytics." The purpose of this competition was to "investigate the relationship between the playing surface and the injury and performance of NFL athletes." The inspiration for the competition was the recent investigations into the higher rate of injuries to NFL players on synthetic turf compared to that on natural turf. As a group, we were interested in sports and health, and this dataset was a reputable intersection of the two. In one of the nation's most profitable, yet dangerous, sports leagues, the risk of investment into a player can be lowered if steps continue to be taken to ensure player safety. While NFL player health is the foremost reason for the creation of this competition and dataset, we believe that conclusions from our analysis can be beneficial to the youth ranks of football as well. Keeping the children safe on the field was an important motivation for our analysis.  Our questions were stemmed from the NFL's own questions about safety. Our first question was an obvious one to come to. We wanted to explore all the variables in the dataset to find which ones were contributing most to injuries, especially severe ones that are career and sometimes life changing. Our second question was derived more specifically as we wanted to look into one of the NFL's most injury-prone positions-- Wide Receivers. This position group are some of the highest paid in the league and also one of the positions that are the most affected long-term by injuries as speed, agility, and sharpness are absolute keys to their success. These factors led us to focusing an analysis on just the wide receivers.
 
-## Questions
+# Questions
 1. Which conditions are linked to the most severe injuries? 
 2. Which conditions are most/least linked to WR injuries?
 
 # Descriptive Statistics and Exploratory Data Analysis
 ## Descriptive Statistics
-Seen below are a few descriptive statistics for the data necessary for answering question 1. There are six character variables, including RosterPosition, BodyPart, StadiumType, Weather, PlayType and FieldType. Additionally, there are two numeric variables, including temperature and Days_Missed. Temperature is a continuous predictor variable, which can be seen in the Exploratory Data Analysis section, and Days_Missed is the discrete outcome variable that is being analyzed. Some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. These statistics will play a role in the future narratives.
 
 ```{r}
 #Question 1 data (all positions)
 summary(question1data)
 ```
 
-Seen below are a few descriptive statistic for the data necessary for answering question 2. The variables included are the same as for question one, but the only RosterPosition is wide receiver. Once again, some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. Notice how values vary compared to the question 1 data. For example, the mean Days_Missed for the wide receiver position is 10.93, whereas for all the positions combined it is almost twice as long at 17.96. This may suggest the wide receivers often miss less time when injured compared to some of the other roster positions.
+Seen above are a few descriptive statistics for the data necessary for answering question 1. There are six character variables, including `RosterPosition`, `BodyPart`, `StadiumType`, `Weather`, `PlayType` and `FieldType`. Additionally, there are two numeric variables, including `Temperature` and `Days_Missed`. `Temperature` is a continuous predictor variable, which can be seen in the Exploratory Data Analysis section, and `Days_Missed` is the discrete outcome variable that is being analyzed. Some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. These statistics will play a role in the future narratives.
 
 ```{r}
 #Question 2 data (WR only)
 summary(question2data)
 ```
+
+Seen above are a few descriptive statistic for the data necessary for answering question 2. The variables included are the same as for question one, but the only `RosterPosition` is wide receiver. Once again, some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. Notice how values vary compared to the question 1 data. For example, the mean Days_Missed for the wide receiver position is 10.93, whereas for all the positions combined it is almost twice as long at 17.96. This may suggest the wide receivers often miss less time when injured compared to some of the other roster positions.
 
 ## Exploratory Data Analysis
 ### Viewing Subsetted Variables Pertinent to Questions
@@ -148,7 +151,6 @@ View(question2data)
 ```
 
 ### Checking Distributions of the Continuous Variables
-#### Question 1: The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen below for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.
 
 ```{r}
 ggplot(question1data, aes(Temperature)) +
@@ -161,8 +163,7 @@ ggplot(question1data, aes(Temperature)) +
   ) +
   theme_minimal()
 ```
-
-#### Question 2: A histogram of the Temperature variable can be seen below for the question 2 data. Once again, take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is a normal distribution. The mean is 64.07 which is almost exactly in the middle of the min, 39, and max 89 degrees fahrenheit.
+Question 1: The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen below for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.
 
 ```{r}
 ggplot(question2data, aes(Temperature)) +
@@ -176,13 +177,18 @@ ggplot(question2data, aes(Temperature)) +
   theme_minimal()
 ```
 
-# Color Palette 
+Question 2: A histogram of the Temperature variable can be seen above for the question 2 data. Once again, take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is a normal distribution. The mean is 64.07 which is almost exactly in the middle of the min, 39, and max 89 degrees fahrenheit.
+
 ```{r}
+# Color Palette 
 pal = c("#8CB369","#2191FB","#F4A259","#BC4B51")
 ```
 
-# Question 1 Plots and Narrative
-## Grouped Bar Chart for BodyPart by Days_Missed
+# Question 1 Plots and Narrative {.tabset}
+
+**1. Which conditions are linked to the most severe injuries?**
+
+## Grouped Bar Chart for BodyPart by Days_Missed 
 ```{r}
 a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
@@ -192,9 +198,30 @@ a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
     ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+
+a1 <- ggplotly(a1)
+
+# Once we make each chart using plot_ly we will be able to use buttons to change the colors of the bars using a color palette that is color blind friendly
+
+a1 <- a1 %>% layout(
+  updatemenus = list(
+    list(
+      type = buttons,
+      y = 2,
+      buttons = list(
+        list(method = "restyle",
+             args = list("bar.color","black"),
+             label = "black")
+      )
+      
+    )
+  )
+)
+
+a1
 ```
 
-## Grouped Bar Chart for FieldType by Days_Missed
+## Grouped Bar Chart for FieldType by Days_Missed 
 ```{r}
 a2<-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
@@ -204,9 +231,11 @@ a2<-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+
+a2 <- ggplotly(a2)
 ```
 
-## Grouped Bar Chart for Weather by Days_Missed
+## Grouped Bar Chart for Weather by Days_Missed 
 ```{r}
 a3<-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
@@ -217,10 +246,12 @@ a3<-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
   scale_fill_manual(values=pal)+
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 45))
+
+a3 <- ggplotly(a3)
 ```
 
 
-## Grouped Bar Chart for Play Type by Days_Missed
+## Grouped Bar Chart for Play Type by Days_Missed 
 ```{r}
 a4<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
@@ -230,22 +261,24 @@ a4<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
   ylab("Count")+
   scale_fill_manual(values=pal)+
   theme_minimal()
+
+a4 <- ggplotly(a4)
 ```
 
-## Combined Chart
+## Combined Chart 
 ```{r}
 q1grid <- plot_grid(a1,a2,a3,a4, 
           labels = c("A", "B", "C","D"),
           ncol = 2, nrow = 2)
-q1grid
 ```
-
-## Narrative 
 
 The first thing to notice is that synthetic turf seems to lead to more severe injuries than natural turf. This is the common thought among NFL players, coaches and fans. A play that took the place in rainy conditions did not lead to longer injury days as many may expect. Plays that led to athletes having more missed days were passes. From the graphs we can also see that athletes who injured their knees were out the longest, likely due to damage done to the cruciate ligaments in the knee.  
 If our stakeholders aim to ensure the quality and health of athletes, we should be looking at potentially several solutions to resolve patterns observed in the bar graphs. One potential solution is playing on natural turf instead of synthetic turf.  Athletic trainers could reevaluate current conditioning plans to ensure athletes are not potentially over or under-training.  In regards to injuries overall, we can suggest the NFL create harsher penalties. For example, changing the unnecessary rule from a loss of 15 yards to 20 or 25 yards could potentially dis-incentivize athletes from engaging in more dangerous plays. 
 
-# Question 2 Plots and Narrative
+# Question 2 Plots and Narrative {.tabset}
+
+**2. Which conditions are most/least linked to WR injuries?**
+
 ## Grouped Bar Chart for BodyPart by Days_Missed
 
 ```{r}
@@ -257,6 +290,7 @@ b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+b1
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
@@ -269,6 +303,7 @@ b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+b2
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
@@ -281,6 +316,7 @@ b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+b3
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
@@ -293,6 +329,7 @@ b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+b4
 ```
 
 ## Combined Chart
@@ -302,8 +339,6 @@ q2grid <- plot_grid(b1,b2,b3,b4,
                     ncol = 2, nrow = 2)
 q2grid
 ```
-
-## Narrative 
 
 We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause receivers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibility or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the most, which makes sense because these are the pays where wide receivers are seeing the most action, but it was actually kickoffs which were the most dangerous based on severity of injury. This could be due to the nature of kickoffs (one team running downhill at the other) and the fact that receivers are more likely to be kick returners, therefore putting themselves in a more dangerous position on kickoffs.
 
