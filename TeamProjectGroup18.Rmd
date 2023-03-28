@@ -32,7 +32,7 @@ library(plotly)
 
 # Establishing Data Set
 [Kaggle-- NFL Injury Analysis](https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data)
-```{r}
+```{r, results = "hide"}
 #Loading in the data from local files
 InjuryRecord <- read.csv("InjuryRecord.csv")
 PlayList <- read.csv("PlayList.csv")
@@ -163,6 +163,7 @@ ggplot(question1data, aes(Temperature)) +
   ) +
   theme_minimal()
 ```
+
 Question 1: The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen below for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.
 
 ```{r}
@@ -200,25 +201,6 @@ a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
   theme_minimal()
 
 a1 <- ggplotly(a1)
-
-# Once we make each chart using plot_ly we will be able to use buttons to change the colors of the bars using a color palette that is color blind friendly
-
-a1 <- a1 %>% layout(
-  updatemenus = list(
-    list(
-      type = buttons,
-      y = 2,
-      buttons = list(
-        list(method = "restyle",
-             args = list("bar.color","black"),
-             label = "black")
-      )
-      
-    )
-  )
-)
-
-a1
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed 
@@ -265,7 +247,7 @@ a4<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
 a4 <- ggplotly(a4)
 ```
 
-## Combined Chart 
+## Combined Chart & Narrative
 ```{r}
 q1grid <- plot_grid(a1,a2,a3,a4, 
           labels = c("A", "B", "C","D"),
@@ -332,7 +314,7 @@ b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
 b4
 ```
 
-## Combined Chart
+## Combined Chart & Narrative
 ```{r}
 q2grid <- plot_grid(b1,b2,b3,b4, 
                     labels = c("A", "B", "C","D"),
