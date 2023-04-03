@@ -1,13 +1,15 @@
 ---
-title: "Team Project Group 18"
-author: "Nathan Patton, Reed Baumgardner, Fadumo Hussein"
-output: 
+title: 'Homework 6: Plotly'
+author: "Nathan Patton"
+date: "2023-03-31"
+output:
  html_document:
   toc: true
   toc_float: true
   theme: lumen
   code_folding: show
 ---
+
 # Executive Summary
 One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were that synthetic turf is more dangerous for football players overall, as popularly believed, but this is not the case for every position, Additionally, rainy conditions did not play as big of a role in creating major injuries than is widely believed. We found passing plays to be more dangerous than other plays overall, but kickoffs led to the most severe injuries for wide receivers, and also that injuries to the knee tend to keep football players out for the longest amount of time.
 
@@ -189,7 +191,7 @@ pal = c("#8CB369","#2191FB","#F4A259","#BC4B51")
 
 **1. Which conditions are linked to the most severe injuries?**
 
-## Grouped Bar Chart for BodyPart by Days_Missed 
+## Grouped Bar Chart for BodyPart by Days_Missed (HOMEWORK CHART #1)
 ```{r}
 a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
@@ -200,7 +202,70 @@ a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
   scale_fill_manual(values=pal)+
   theme_minimal()
 
-a1 <- ggplotly(a1)
+a1
+```
+
+```{r}
+a1plotly <- question1data %>%
+  mutate(fType = as.factor(BodyPart)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal, 
+    hovertemplate = 'Days Missed: %{color} <br>Frequency: %{y} <br>Body Part: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Body Part",
+         xaxis = list(title = "Body Part"),
+         yaxis = list(title = "Frequency"),
+         showlegend = TRUE,
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
+
+a1plotly
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed 
@@ -214,7 +279,22 @@ a2<-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
   scale_fill_manual(values=pal)+
   theme_minimal()
 
-a2 <- ggplotly(a2)
+a2
+```
+
+```{r}
+a2plotly <- question1data %>%
+  mutate(fType = as.factor(FieldType)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Field Type: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Field Type",
+         xaxis = list(title = "Field Type"),
+         yaxis = list(title = "Frequency"),
+         legend = list(title=list(text='<b> Days Missed </b>')))
+
+a2plotly
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed 
@@ -229,9 +309,23 @@ a3<-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) +
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 45))
 
-a3 <- ggplotly(a3)
+a3
 ```
 
+```{r}
+a3plotly <- question1data %>%
+  mutate(fType = as.factor(Weather)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Weather: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Weather",
+         xaxis = list(title = "Weather"),
+         yaxis = list(title = "Frequency"),
+         legend = list(title=list(text='<b> Days Missed </b>')))
+
+a3plotly
+```
 
 ## Grouped Bar Chart for Play Type by Days_Missed 
 ```{r}
@@ -244,14 +338,31 @@ a4<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
   scale_fill_manual(values=pal)+
   theme_minimal()
 
-a4 <- ggplotly(a4)
+a4
+```
+
+```{r}
+a4plotly <- question1data %>%
+  mutate(fType = as.factor(PlayType)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Play Type: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Play Type",
+         xaxis = list(title = "Play Type"),
+         yaxis = list(title = "Frequency"),
+         legend = list(title=list(text='<b> Days Missed </b>')))
+
+a4plotly
 ```
 
 ## Combined Chart & Narrative
 ```{r}
-q1grid <- plot_grid(a1,a2,a3,a4, 
-          labels = c("A", "B", "C","D"),
-          ncol = 2, nrow = 2)
+# NEED TO DO THIS IN PLOTLY
+q2grid <- plot_grid(a1, a2, a3, a4, 
+                    labels = c("A", "B", "C","D"),
+                    ncol = 2, nrow = 2)
+q2grid
 ```
 
 The first thing to notice is that synthetic turf seems to lead to more severe injuries than natural turf. This is the common thought among NFL players, coaches and fans. A play that took the place in rainy conditions did not lead to longer injury days as many may expect. Plays that led to athletes having more missed days were passes. From the graphs we can also see that athletes who injured their knees were out the longest, likely due to damage done to the cruciate ligaments in the knee.  
@@ -261,10 +372,10 @@ If our stakeholders aim to ensure the quality and health of athletes, we should 
 
 **2. Which conditions are most/least linked to WR injuries?**
 
-## Grouped Bar Chart for BodyPart by Days_Missed
+## Grouped Bar Chart for BodyPart by Days_Missed (HOMEWORK CHART #2)
 
 ```{r}
-b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
+b1 <-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Body Part") +
@@ -272,12 +383,30 @@ b1<-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+
 b1
+```
+
+```{r}
+b1plotly <- question2data %>%
+  mutate(fType = as.factor(BodyPart)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Body Part: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Body Part",
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         xaxis = list(
+           title = "Body Part",
+           rangeslider = list(visible = TRUE)),
+         yaxis = list(title = "Frequency"))
+
+b1plotly
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
 ```{r}
-b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
+b2 <-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Field Type") +
@@ -285,25 +414,56 @@ b2<-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+
 b2
+```
+
+```{r}
+b2plotly <- question2data %>%
+  mutate(fType = as.factor(FieldType)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Field Type: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Field Type",
+         xaxis = list(title = "Field Type"),
+         yaxis = list(title = "Frequency"),
+         legend = list(title=list(text='<b> Days Missed </b>')))
+
+b2plotly
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
 ```{r}
-b3<-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
+b3 <-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Weather") +
-  xlab("Weather Conditions") +
+  xlab("Weather") +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+
 b3
+```
+
+```{r}
+b3plotly <- question2data %>%
+  mutate(fType = as.factor(Weather)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Weather: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Weather",
+         xaxis = list(title = "Weather"),
+         yaxis = list(title = "Frequency"), 
+         legend = list(title=list(text='<b> Days Missed </b>')))
+b3plotly
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
 ```{r}
-b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
+b4 <-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
   geom_bar(position = "dodge") +
   labs(
     title = "Count of Days Missed by Play Type") +
@@ -311,12 +471,29 @@ b4<-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) +
   ylab("Count")+ 
   scale_fill_manual(values=pal)+
   theme_minimal()
+
 b4
+```
+
+```{r}
+b4plotly <- question2data %>%
+  mutate(fType = as.factor(PlayType)) %>%
+  count(fType, Days_Missed) %>%
+  plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
+          hovertemplate = 'Frequency: %{y} <br>Play Type: %{x}') %>%
+  add_bars() %>%
+  layout(title = "Frequency of Days Missed by Play Type",
+         xaxis = list(title = "Play Type"),
+         yaxis = list(title = "Frequency"),
+         legend = list(title=list(text='<b> Days Missed </b>')))
+
+b4plotly
 ```
 
 ## Combined Chart & Narrative
 ```{r}
-q2grid <- plot_grid(b1,b2,b3,b4, 
+# NEED TO DO THIS IN PLOTLY
+q2grid <- plot_grid(b1, b2, b3, b4, 
                     labels = c("A", "B", "C","D"),
                     ncol = 2, nrow = 2)
 q2grid
