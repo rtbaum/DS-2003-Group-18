@@ -206,7 +206,7 @@ a1
 ```
 
 ```{r}
-a1plotly <- question1data %>%
+plotlya1 <- question1data %>%
   mutate(fType = as.factor(BodyPart)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal, 
@@ -265,7 +265,7 @@ a1plotly <- question1data %>%
      )
   )
 
-a1plotly
+plotlya1
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed 
@@ -283,7 +283,7 @@ a2
 ```
 
 ```{r}
-a2plotly <- question1data %>%
+plotlya2 <- question1data %>%
   mutate(fType = as.factor(FieldType)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -294,7 +294,7 @@ a2plotly <- question1data %>%
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
 
-a2plotly
+plotlya2
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed 
@@ -313,7 +313,7 @@ a3
 ```
 
 ```{r}
-a3plotly <- question1data %>%
+plotlya3 <- question1data %>%
   mutate(fType = as.factor(Weather)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -324,7 +324,7 @@ a3plotly <- question1data %>%
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
 
-a3plotly
+plotlya3
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed 
@@ -342,7 +342,7 @@ a4
 ```
 
 ```{r}
-a4plotly <- question1data %>%
+plotlya4 <- question1data %>%
   mutate(fType = as.factor(PlayType)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -353,7 +353,7 @@ a4plotly <- question1data %>%
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
 
-a4plotly
+plotlya4
 ```
 
 ## Combined Chart & Narrative
@@ -364,6 +364,19 @@ q2grid <- plot_grid(a1, a2, a3, a4,
                     ncol = 2, nrow = 2)
 q2grid
 ```
+## Combined Chart & Narrative
+```{r}
+ui <-shinyUI(fluidPage(selectInput("selectPlot", "Choose desired plot", choices=paste0("plotlya", 1:4)), plotlyOutput("plot")))
+
+server <- shinyServer(function(input,output){      
+  output$plot <- renderPlotly({
+    return(get(input$selectPlot)) # get("p1") from the workspace returns the object p1, which is a plotly object
+  })
+})
+
+shinyApp(ui,server)
+```
+
 
 The first thing to notice is that synthetic turf seems to lead to more severe injuries than natural turf. This is the common thought among NFL players, coaches and fans. A play that took the place in rainy conditions did not lead to longer injury days as many may expect. Plays that led to athletes having more missed days were passes. From the graphs we can also see that athletes who injured their knees were out the longest, likely due to damage done to the cruciate ligaments in the knee.  
 If our stakeholders aim to ensure the quality and health of athletes, we should be looking at potentially several solutions to resolve patterns observed in the bar graphs. One potential solution is playing on natural turf instead of synthetic turf.  Athletic trainers could reevaluate current conditioning plans to ensure athletes are not potentially over or under-training.  In regards to injuries overall, we can suggest the NFL create harsher penalties. For example, changing the unnecessary rule from a loss of 15 yards to 20 or 25 yards could potentially dis-incentivize athletes from engaging in more dangerous plays. 
