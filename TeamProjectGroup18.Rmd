@@ -1,13 +1,15 @@
 ---
-title: 'Homework 6: Plotly'
+title: 'Team Project Group 18'
 author: "Nathan Patton"
 date: "2023-03-31"
 output:
  html_document:
+  number_sections: no
   toc: true
   toc_float: true
   theme: lumen
   code_folding: show
+runtime: shiny
 ---
 
 # Executive Summary
@@ -30,6 +32,7 @@ library(datadictionary)
 library(pastecs)
 library(skimr)
 library(plotly)
+library(shiny)
 ```
 
 # Establishing Data Set
@@ -166,7 +169,7 @@ ggplot(question1data, aes(Temperature)) +
   theme_minimal()
 ```
 
-Question 1: The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen below for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.
+Question 1: The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen above for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.
 
 ```{r}
 ggplot(question2data, aes(Temperature)) +
@@ -192,18 +195,6 @@ pal = c("#8CB369","#2191FB","#F4A259","#BC4B51")
 **1. Which conditions are linked to the most severe injuries?**
 
 ## Grouped Bar Chart for BodyPart by Days_Missed (HOMEWORK CHART #1)
-```{r}
-a1<-ggplot(question1data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Body Part") +
-    xlab("Body Part Injured") +
-    ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-a1
-```
 
 ```{r}
 plotlya1 <- question1data %>%
@@ -264,23 +255,10 @@ plotlya1 <- question1data %>%
         )
      )
   )
-
 plotlya1
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed 
-```{r}
-a2<-ggplot(question1data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Field Type") +
-  xlab("Field Type") +
-  ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-a2
-```
 
 ```{r}
 plotlya2 <- question1data %>%
@@ -293,24 +271,10 @@ plotlya2 <- question1data %>%
          xaxis = list(title = "Field Type"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-
 plotlya2
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed 
-```{r}
-a3<-ggplot(question1data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Weather") +
-  xlab("Weather Conditions") +
-  ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()+
-  theme(axis.text.x = element_text(angle = 45))
-
-a3
-```
 
 ```{r}
 plotlya3 <- question1data %>%
@@ -323,23 +287,10 @@ plotlya3 <- question1data %>%
          xaxis = list(title = "Weather"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-
 plotlya3
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed 
-```{r}
-a4<-ggplot(question1data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Play Type") +
-  xlab("Play Type") +
-  ylab("Count")+
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-a4
-```
 
 ```{r}
 plotlya4 <- question1data %>%
@@ -352,28 +303,17 @@ plotlya4 <- question1data %>%
          xaxis = list(title = "Play Type"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-
 plotlya4
 ```
 
 ## Combined Chart & Narrative
 ```{r}
-# NEED TO DO THIS IN PLOTLY
-q2grid <- plot_grid(a1, a2, a3, a4, 
-                    labels = c("A", "B", "C","D"),
-                    ncol = 2, nrow = 2)
-q2grid
-```
-## Combined Chart & Narrative
-```{r}
 ui <-shinyUI(fluidPage(selectInput("selectPlot", "Choose desired plot", choices=paste0("plotlya", 1:4)), plotlyOutput("plot")))
-
 server <- shinyServer(function(input,output){      
   output$plot <- renderPlotly({
     return(get(input$selectPlot)) # get("p1") from the workspace returns the object p1, which is a plotly object
   })
 })
-
 shinyApp(ui,server)
 ```
 
@@ -388,19 +328,6 @@ If our stakeholders aim to ensure the quality and health of athletes, we should 
 ## Grouped Bar Chart for BodyPart by Days_Missed (HOMEWORK CHART #2)
 
 ```{r}
-b1 <-ggplot(question2data, aes(x=BodyPart, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Body Part") +
-  xlab("Body Part Injured") +
-  ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-b1
-```
-
-```{r}
 b1plotly <- question2data %>%
   mutate(fType = as.factor(BodyPart)) %>%
   count(fType, Days_Missed) %>%
@@ -413,23 +340,10 @@ b1plotly <- question2data %>%
            title = "Body Part",
            rangeslider = list(visible = TRUE)),
          yaxis = list(title = "Frequency"))
-
 b1plotly
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
-```{r}
-b2 <-ggplot(question2data, aes(x=FieldType, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Field Type") +
-  xlab("Field Type") +
-  ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-b2
-```
 
 ```{r}
 b2plotly <- question2data %>%
@@ -442,23 +356,10 @@ b2plotly <- question2data %>%
          xaxis = list(title = "Field Type"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-
 b2plotly
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
-```{r}
-b3 <-ggplot(question2data, aes(x=Weather, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Weather") +
-  xlab("Weather") +
-  ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-b3
-```
 
 ```{r}
 b3plotly <- question2data %>%
@@ -475,18 +376,6 @@ b3plotly
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
-```{r}
-b4 <-ggplot(question2data, aes(x=PlayType, y=..count.., fill=Days_Missed)) + 
-  geom_bar(position = "dodge") +
-  labs(
-    title = "Count of Days Missed by Play Type") +
-  xlab("Play Type") +
-  ylab("Count")+ 
-  scale_fill_manual(values=pal)+
-  theme_minimal()
-
-b4
-```
 
 ```{r}
 b4plotly <- question2data %>%
@@ -499,18 +388,10 @@ b4plotly <- question2data %>%
          xaxis = list(title = "Play Type"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-
 b4plotly
 ```
 
 ## Combined Chart & Narrative
-```{r}
-# NEED TO DO THIS IN PLOTLY
-q2grid <- plot_grid(b1, b2, b3, b4, 
-                    labels = c("A", "B", "C","D"),
-                    ncol = 2, nrow = 2)
-q2grid
-```
 
 We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause receivers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibility or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the most, which makes sense because these are the pays where wide receivers are seeing the most action, but it was actually kickoffs which were the most dangerous based on severity of injury. This could be due to the nature of kickoffs (one team running downhill at the other) and the fact that receivers are more likely to be kick returners, therefore putting themselves in a more dangerous position on kickoffs.
 
