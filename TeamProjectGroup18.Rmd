@@ -391,6 +391,21 @@ b4plotly <- question2data %>%
 b4plotly
 ```
 
+## Combined Chart and Shiny 
+```{r}
+
+ui <-shinyUI(fluidPage(selectInput("selectPlot", "Choose desired plot", choices=c("b1plotly", "b2plotly", "b3plotly", "b4plotly")), plotlyOutput("plot")))
+
+server <- shinyServer(function(input,output){      
+  output$plot <- renderPlotly({
+    return(get(input$selectPlot)) 
+  })
+})
+
+shinyApp(ui,server)
+
+```
+
 ## Combined Chart & Narrative
 
 We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause receivers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibility or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the most, which makes sense because these are the pays where wide receivers are seeing the most action, but it was actually kickoffs which were the most dangerous based on severity of injury. This could be due to the nature of kickoffs (one team running downhill at the other) and the fact that receivers are more likely to be kick returners, therefore putting themselves in a more dangerous position on kickoffs.
