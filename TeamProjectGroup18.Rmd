@@ -150,9 +150,9 @@ Seen above are a few descriptive statistic for the data necessary for answering 
 ### Viewing Subsetted Variables Pertinent to Questions
 ```{r}
 #1. Which conditions are linked to the most and most severe injuries? 
-View(question1data)
+head(question1data)
 #2. Which conditions are most/least linked to WR injuries?
-View(question2data)
+head(question2data)
 ```
 
 ### Checking Distributions of the Continuous Variables
@@ -194,10 +194,10 @@ pal = c("#8CB369","#2191FB","#F4A259","#BC4B51")
 
 **1. Which conditions are linked to the most severe injuries?**
 
-## Grouped Bar Chart for BodyPart by Days_Missed (HOMEWORK CHART #1)
+## Grouped Bar Chart for BodyPart by Days_Missed
 
 ```{r}
-plotlya1 <- question1data %>%
+DaysMissed_BodyPart_AllPositions <- question1data %>%
   mutate(fType = as.factor(BodyPart)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal, 
@@ -255,13 +255,12 @@ plotlya1 <- question1data %>%
         )
      )
   )
-plotlya1
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed 
 
 ```{r}
-plotlya2 <- question1data %>%
+DaysMissed_FieldType_AllPositions <- question1data %>%
   mutate(fType = as.factor(FieldType)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -270,14 +269,60 @@ plotlya2 <- question1data %>%
   layout(title = "Frequency of Days Missed by Field Type",
          xaxis = list(title = "Field Type"),
          yaxis = list(title = "Frequency"),
-         legend = list(title=list(text='<b> Days Missed </b>')))
-plotlya2
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed 
 
 ```{r}
-plotlya3 <- question1data %>%
+DaysMissed_Weather_AllPositions <- question1data %>%
   mutate(fType = as.factor(Weather)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -286,14 +331,60 @@ plotlya3 <- question1data %>%
   layout(title = "Frequency of Days Missed by Weather",
          xaxis = list(title = "Weather"),
          yaxis = list(title = "Frequency"),
-         legend = list(title=list(text='<b> Days Missed </b>')))
-plotlya3
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed 
 
 ```{r}
-plotlya4 <- question1data %>%
+DaysMissed_PlayType_AllPositions <- question1data %>%
   mutate(fType = as.factor(PlayType)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -302,13 +393,59 @@ plotlya4 <- question1data %>%
   layout(title = "Frequency of Days Missed by Play Type",
          xaxis = list(title = "Play Type"),
          yaxis = list(title = "Frequency"),
-         legend = list(title=list(text='<b> Days Missed </b>')))
-plotlya4
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Combined Chart & Narrative
 ```{r}
-ui <-shinyUI(fluidPage(selectInput("selectPlot", "Choose desired plot", choices=paste0("plotlya", 1:4)), plotlyOutput("plot")))
+ui <-shinyUI(fluidPage(selectInput("selectPlot", "Choose desired plot", choices=c("DaysMissed_BodyPart_AllPositions", "DaysMissed_FieldType_AllPositions", "DaysMissed_Weather_AllPositions", "DaysMissed_PlayType_AllPositions")), plotlyOutput("plot")))
 server <- shinyServer(function(input,output){      
   output$plot <- renderPlotly({
     return(get(input$selectPlot)) # get("p1") from the workspace returns the object p1, which is a plotly object
@@ -325,10 +462,10 @@ If our stakeholders aim to ensure the quality and health of athletes, we should 
 
 **2. Which conditions are most/least linked to WR injuries?**
 
-## Grouped Bar Chart for BodyPart by Days_Missed (HOMEWORK CHART #2)
+## Grouped Bar Chart for BodyPart by Days_Missed
 
 ```{r}
-b1plotly <- question2data %>%
+DaysMissed_BodyPart_WR <- question2data %>%
   mutate(fType = as.factor(BodyPart)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -337,16 +474,14 @@ b1plotly <- question2data %>%
   layout(title = "Frequency of Days Missed by Body Part",
          legend = list(title=list(text='<b> Days Missed </b>')),
          xaxis = list(
-           title = "Body Part",
-           rangeslider = list(visible = TRUE)),
+           title = "Body Part"),
          yaxis = list(title = "Frequency"))
-b1plotly
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
 
 ```{r}
-b2plotly <- question2data %>%
+DaysMissed_FieldType_WR <- question2data %>%
   mutate(fType = as.factor(FieldType)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -356,13 +491,12 @@ b2plotly <- question2data %>%
          xaxis = list(title = "Field Type"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-b2plotly
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
 
 ```{r}
-b3plotly <- question2data %>%
+DaysMissed_Weather_WR <- question2data %>%
   mutate(fType = as.factor(Weather)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -372,13 +506,12 @@ b3plotly <- question2data %>%
          xaxis = list(title = "Weather"),
          yaxis = list(title = "Frequency"), 
          legend = list(title=list(text='<b> Days Missed </b>')))
-b3plotly
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
 
 ```{r}
-b4plotly <- question2data %>%
+DaysMissed_FieldType_WR <- question2data %>%
   mutate(fType = as.factor(PlayType)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
@@ -388,25 +521,19 @@ b4plotly <- question2data %>%
          xaxis = list(title = "Play Type"),
          yaxis = list(title = "Frequency"),
          legend = list(title=list(text='<b> Days Missed </b>')))
-b4plotly
 ```
 
-## Combined Chart and Shiny 
+## Combined Chart & Narrative
+
 ```{r}
-
 ui <-shinyUI(fluidPage(selectInput("selectPlot", "Choose desired plot", choices=c("b1plotly", "b2plotly", "b3plotly", "b4plotly")), plotlyOutput("plot")))
-
 server <- shinyServer(function(input,output){      
   output$plot <- renderPlotly({
     return(get(input$selectPlot)) 
   })
 })
-
 shinyApp(ui,server)
-
 ```
-
-## Combined Chart & Narrative
 
 We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause receivers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibility or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the most, which makes sense because these are the pays where wide receivers are seeing the most action, but it was actually kickoffs which were the most dangerous based on severity of injury. This could be due to the nature of kickoffs (one team running downhill at the other) and the fact that receivers are more likely to be kick returners, therefore putting themselves in a more dangerous position on kickoffs.
 
