@@ -33,6 +33,7 @@ library(pastecs)
 library(skimr)
 library(plotly)
 library(shiny)
+library(shinythemes)
 ```
 
 # Establishing Data Set
@@ -107,19 +108,15 @@ football_info <- tribble(
   ~ name, ~ description,
   "`RosterPosition`", "Player's postion on the team ",
   "`BodyPart`", "Injuried part of the body.",
-  "`StadiumType`", "Description of the stadium type",
   "`Temperature`", "On-field temperature at the start of the game.",
   "`Weather`", "Weather at the stadium", 
   "`PlayType`", "Description of the play when the injury was recorded", 
   "`FieldType`", "Type of field when injury was recorded",
   "`Days_Missed`", "Number of days missed after an injury")
-kable(
-  football_info,
-  format = "html",
-  col.names = c("", "")
-) %>%
+data_dictionary <- kable(football_info, format = "html", col.names = c("", "")) %>%
   group_rows(index = c("Data Dictionary")) %>%
   kable_styling(bootstrap_options = c("hover"))
+data_dictionary
 ```
 
 # Background
@@ -158,7 +155,7 @@ head(question2data)
 ### Checking Distributions of the Continuous Variables
 
 ```{r}
-ggplot(question1data, aes(Temperature)) +
+Question1_Temp_Historgram <- ggplot(question1data, aes(Temperature)) +
   geom_histogram(bins = 9, fill = '#540d6e') + 
   geom_vline(aes(xintercept = mean(Temperature)),col = 'lightgray', linewidth = 1) +
   geom_vline(aes(xintercept = median(Temperature)), col = 'lightgray', linetype = 'dashed') +
@@ -172,7 +169,7 @@ ggplot(question1data, aes(Temperature)) +
 Question 1: The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen above for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.
 
 ```{r}
-ggplot(question2data, aes(Temperature)) +
+Question2_Temp_Historgram <- ggplot(question2data, aes(Temperature)) +
   geom_histogram(bins = 4, fill = '#540d6e') + 
   geom_vline(aes(xintercept = mean(Temperature)),col = 'lightgray', linewidth = 1) +
   geom_vline(aes(xintercept = median(Temperature)), col = 'lightgray', linetype = 'dashed') +
@@ -472,10 +469,10 @@ DaysMissed_BodyPart_WR <- question2data %>%
           hovertemplate = 'Frequency: %{y} <br>Body Part: %{x}') %>%
   add_bars() %>%
   layout(title = "Frequency of Days Missed by Body Part",
-         xaxis = list(title = "Body Part"),
-         yaxis = list(title = "Frequency"),
-         showlegend = TRUE,
          legend = list(title=list(text='<b> Days Missed </b>')),
+         xaxis = list(
+           title = "Body Part"),
+         yaxis = list(title = "Frequency"),
          updatemenus = list(
            list(
              type = "buttons",
@@ -534,10 +531,9 @@ DaysMissed_FieldType_WR <- question2data %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
           hovertemplate = 'Frequency: %{y} <br>Field Type: %{x}') %>%
   add_bars() %>%
-  layout(title = "Frequency of Days Missed by Body Part",
-         xaxis = list(title = "Body Part"),
+  layout(title = "Frequency of Days Missed by Field Type",
+         xaxis = list(title = "Field Type"),
          yaxis = list(title = "Frequency"),
-         showlegend = TRUE,
          legend = list(title=list(text='<b> Days Missed </b>')),
          updatemenus = list(
            list(
@@ -597,10 +593,9 @@ DaysMissed_Weather_WR <- question2data %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
           hovertemplate = 'Frequency: %{y} <br>Weather: %{x}') %>%
   add_bars() %>%
-  layout(title = "Frequency of Days Missed by Body Part",
-         xaxis = list(title = "Body Part"),
-         yaxis = list(title = "Frequency"),
-         showlegend = TRUE,
+  layout(title = "Frequency of Days Missed by Weather",
+         xaxis = list(title = "Weather"),
+         yaxis = list(title = "Frequency"), 
          legend = list(title=list(text='<b> Days Missed </b>')),
          updatemenus = list(
            list(
@@ -660,10 +655,9 @@ DaysMissed_PlayType_WR <- question2data %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
           hovertemplate = 'Frequency: %{y} <br>Play Type: %{x}') %>%
   add_bars() %>%
-  layout(title = "Frequency of Days Missed by Body Part",
-         xaxis = list(title = "Body Part"),
+  layout(title = "Frequency of Days Missed by Play Type",
+         xaxis = list(title = "Play Type"),
          yaxis = list(title = "Frequency"),
-         showlegend = TRUE,
          legend = list(title=list(text='<b> Days Missed </b>')),
          updatemenus = list(
            list(
@@ -736,66 +730,70 @@ Our goal in this report is to ultimately give insight as to how we can ensure th
 # Citations
 [STHDA (help with plot_grid())](http://www.sthda.com/english/articles/24-ggpubr-publication-ready-plots/81-ggplot2-easy-way-to-mix-multiple-graphs-on-the-same-page/)
 
-
-
-
-
-
 ```{r}
 ui <- 
   fluidPage(
-    navbarPage(title = "Analysis of National Football League Injuries",
+    navbarPage(theme = shinytheme("journal"), title = span( "Analysis of National Football League Injuries", style = "background-color: #DEEBF7"),
       
         ################################################
         # Introduction      
         tabPanel(
         "Introduction",
-        p("Executive Summary: One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were that synthetic turf is more dangerous for football players overall, as popularly believed, but this is not the case for every position, Additionally, rainy conditions did not play as big of a role in creating major injuries than is widely believed. We found passing plays to be more dangerous than other plays overall, but kickoffs led to the most severe injuries for wide receivers, and also that injuries to the knee tend to keep football players out for the longest amount of time."),
-        p("Background: This dataset was created by the National Football League (NFL) for a Kaggle-based analytics competition named NFL 1st and Future - Analytics. The purpose of this competition was to investigate the relationship between the playing surface and the injury and performance of NFL athletes. The inspiration for the competition was the recent investigations into the higher rate of injuries to NFL players on synthetic turf compared to that on natural turf. As a group, we were interested in sports and health, and this dataset was a reputable intersection of the two. In one of the nation's most profitable, yet dangerous, sports leagues, the risk of investment into a player can be lowered if steps continue to be taken to ensure player safety. While NFL player health is the foremost reason for the creation of this competition and dataset, we believe that conclusions from our analysis can be beneficial to the youth ranks of football as well. Keeping the children safe on the field was an important motivation for our analysis.  Our questions were stemmed from the NFL's own questions about safety. Our first question was an obvious one to come to. We wanted to explore all the variables in the dataset to find which ones were contributing most to injuries, especially severe ones that are career and sometimes life changing. Our second question was derived more specifically as we wanted to look into one of the NFL's most injury-prone positions-- Wide Receivers. This position group are some of the highest paid in the league and also one of the positions that are the most affected long-term by injuries as speed, agility, and sharpness are absolute keys to their success. These factors led us to focusing an analysis on just the wide receivers."),
+        p("Executive Summary: One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were that synthetic turf is more dangerous for football players overall, as popularly believed, but this is not the case for every position, Additionally, rainy conditions did not play as big of a role in creating major injuries than is widely believed. We found passing plays to be more dangerous than other plays overall, but kickoffs led to the most severe injuries for wide receivers, and also that injuries to the knee tend to keep football players out for the longest amount of time.", style = "background-color: #DEEBF7"),
+        htmlOutput("data_kable"),
+        p("Background: This dataset was created by the National Football League (NFL) for a Kaggle-based analytics competition named NFL 1st and Future - Analytics. The purpose of this competition was to investigate the relationship between the playing surface and the injury and performance of NFL athletes. The inspiration for the competition was the recent investigations into the higher rate of injuries to NFL players on synthetic turf compared to that on natural turf. As a group, we were interested in sports and health, and this dataset was a reputable intersection of the two. In one of the nation's most profitable, yet dangerous, sports leagues, the risk of investment into a player can be lowered if steps continue to be taken to ensure player safety. While NFL player health is the foremost reason for the creation of this competition and dataset, we believe that conclusions from our analysis can be beneficial to the youth ranks of football as well. Keeping the children safe on the field was an important motivation for our analysis.  Our questions were stemmed from the NFL's own questions about safety. Our first question was an obvious one to come to. We wanted to explore all the variables in the dataset to find which ones were contributing most to injuries, especially severe ones that are career and sometimes life changing. Our second question was derived more specifically as we wanted to look into one of the NFL's most injury-prone positions-- Wide Receivers. This position group are some of the highest paid in the league and also one of the positions that are the most affected long-term by injuries as speed, agility, and sharpness are absolute keys to their success. These factors led us to focusing an analysis on just the wide receivers.", style = "background-color: #DEEBF7"),
         p("Questions: 1. Which conditions are linked to the most severe injuries? 
-          2. Which conditions are most/least linked to WR injuries?")),
+          2. Which conditions are most/least linked to WR injuries?", style = "background-color: #DEEBF7")),
       
       ################################################
       # Question 1
       tabPanel(
         "Question 1",
-        p("Question 1: Which conditions are linked to the most severe injuries?"),
-        selectInput("selectPlot1", "Choose Variable of Interest", choices=c("DaysMissed_BodyPart_AllPositions", "DaysMissed_FieldType_AllPositions", "DaysMissed_Weather_AllPositions", "DaysMissed_PlayType_AllPositions")),
+        p("Question 1: Which conditions are linked to the most severe injuries?", style = "background-color: #DEEBF7"),
+        selectInput("selectPlot1", "Choose Variable of Interest", choices=c("Frequency of DaysMissed by BodyPart for All Positions" = "DaysMissed_BodyPart_AllPositions", "Frequency of DaysMissed by FieldType for All Positions" = "DaysMissed_FieldType_AllPositions", "Frequency of DaysMissed by Weather for All Positions" = "DaysMissed_Weather_AllPositions", "Frequency of DaysMissed by PlayType for All Positions" = "DaysMissed_PlayType_AllPositions")),
         plotlyOutput("Question1Plot"),
         p("Narrative: The first thing to notice is that synthetic turf seems to lead to more severe injuries than natural turf. This is the common thought among NFL players, coaches and fans. A play that took the place in rainy conditions did not lead to longer injury days as many may expect. Plays that led to athletes having more missed days were passes. From the graphs we can also see that athletes who injured their knees were out the longest, likely due to damage done to the cruciate ligaments in the knee.  
-If our stakeholders aim to ensure the quality and health of athletes, we should be looking at potentially several solutions to resolve patterns observed in the bar graphs. One potential solution is playing on natural turf instead of synthetic turf.  Athletic trainers could reevaluate current conditioning plans to ensure athletes are not potentially over or under-training.  In regards to injuries overall, we can suggest the NFL create harsher penalties. For example, changing the unnecessary rule from a loss of 15 yards to 20 or 25 yards could potentially dis-incentivize athletes from engaging in more dangerous plays. ")),
+If our stakeholders aim to ensure the quality and health of athletes, we should be looking at potentially several solutions to resolve patterns observed in the bar graphs. One potential solution is playing on natural turf instead of synthetic turf.  Athletic trainers could reevaluate current conditioning plans to ensure athletes are not potentially over or under-training.  In regards to injuries overall, we can suggest the NFL create harsher penalties. For example, changing the unnecessary rule from a loss of 15 yards to 20 or 25 yards could potentially dis-incentivize athletes from engaging in more dangerous plays.", style = "background-color: #DEEBF7")),
       
       ################################################
       # Question 2
       tabPanel(
         "Question 2",
-        p("Question 2: Which conditions are most/least linked to WR injuries?"),
-        selectInput("selectPlot2", "Choose Variable of Interest", choices=c("DaysMissed_BodyPart_WR", "DaysMissed_FieldType_WR", "DaysMissed_Weather_WR", "DaysMissed_PlayType_WR")), plotlyOutput("Question2Plot"),
-        p("Narrative: We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause receivers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibility or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the most, which makes sense because these are the pays where wide receivers are seeing the most action, but it was actually kickoffs which were the most dangerous based on severity of injury. This could be due to the nature of kickoffs (one team running downhill at the other) and the fact that receivers are more likely to be kick returners, therefore putting themselves in a more dangerous position on kickoffs.Knowing our stakeholders and their goal to protect the health of our players, here are potential solutions for wide receivers. One solution can be creating harsher penalties for necessary roughness on the field, as discussed earlier.  Additionally, we can be looking at having wide receivers wear ankle braces to ensure the stability of their ankles. However, we do recognize that adding any potential weight to them will slow their")),
+        p("Question 2: Which conditions are most/least linked to WR injuries?", style = "background-color: #DEEBF7"),
+        selectInput("selectPlot2", "Choose Variable of Interest", choices=c("Frequency of DaysMissed by BodyPart for WR" = "DaysMissed_BodyPart_WR", "Frequency of DaysMissed by FieldType for WR" = "DaysMissed_FieldType_WR", 
+"Frequency of DaysMissed by Weather for WR" = "DaysMissed_Weather_WR", "Frequency of DaysMissed by PlayType for WR" = "DaysMissed_PlayType_WR")), plotlyOutput("Question2Plot"),
+        p("Narrative: We focused our next question on wide receivers specifically. Once again we wanted to focus on this group of athletes due to how injury prone this role is. Injuries to the ankle cause receivers to sit out for the longest, which is different to that of which we saw for the entire dataset with all positions.  There was no noticeable difference in field types, however.  Similar to the first set of graphs,  play that took place in cloudy weather led to longer lasting injuries than rainy conditions, possibly due to reduced visibility or temperatures, but nonetheless against what is the commonly held belief. Finally, passing plays also led to wide receivers being out the most, which makes sense because these are the pays where wide receivers are seeing the most action, but it was actually kickoffs which were the most dangerous based on severity of injury. This could be due to the nature of kickoffs (one team running downhill at the other) and the fact that receivers are more likely to be kick returners, therefore putting themselves in a more dangerous position on kickoffs.Knowing our stakeholders and their goal to protect the health of our players, here are potential solutions for wide receivers. One solution can be creating harsher penalties for necessary roughness on the field, as discussed earlier.  Additionally, we can be looking at having wide receivers wear ankle braces to ensure the stability of their ankles. However, we do recognize that adding any potential weight to them will slow their", style = "background-color: #DEEBF7")),
       
       ################################################
       # Summary
       tabPanel(
         "Summary",
-        p("Our goal in this report is to ultimately give insight as to how we can ensure the safety of athletes.  This was our intent in each step of this report whether it be data cleaning looking at data descriptives and building plots that can give us insight but also potential solutions on how to keep athletes safe. A major finding was that rainy conditions did not play as big of a role in creating major injuries than we would have expected. This may suggest that less football games, mostly in the youth ranks of the game, need to be cancelled due to rain (sorry to the parents who will have to do laundry after!). We also found that passing plays resulted in more serious injuries than rushing plays. This knowledge can inform NFL coaches on the elevated risk of passing plays, possibly decreasing their frequency in a gameplan for a team more concerned with injuries. It may also be important to limit the amount of passing plays in the youth ranks of the game to better protect our young athletes. It was also found that kickoffs are a dangerous play for wide receivers, likely due to the nature of kickoffs and the fact that receivers are more likely to be kick returners. Another finding was that while synthetic turf may be more dangerous overall, it did not show itself to be more dangerous for specifically wide receivers. We would still suggest, however, the NFL move away from synthetic turf fields and youth teams avoid playing on synthetic turf as well. Overall, looking at the data, we feel confident that we were able to answer both of our questions and additionally provide potential solutions to limit the risk of injury for football players not only in the NFL, but across all ages.")),
+        p("Our goal in this report is to ultimately give insight as to how we can ensure the safety of athletes.  This was our intent in each step of this report whether it be data cleaning looking at data descriptives and building plots that can give us insight but also potential solutions on how to keep athletes safe. A major finding was that rainy conditions did not play as big of a role in creating major injuries than we would have expected. This may suggest that less football games, mostly in the youth ranks of the game, need to be cancelled due to rain (sorry to the parents who will have to do laundry after!). We also found that passing plays resulted in more serious injuries than rushing plays. This knowledge can inform NFL coaches on the elevated risk of passing plays, possibly decreasing their frequency in a gameplan for a team more concerned with injuries. It may also be important to limit the amount of passing plays in the youth ranks of the game to better protect our young athletes. It was also found that kickoffs are a dangerous play for wide receivers, likely due to the nature of kickoffs and the fact that receivers are more likely to be kick returners. Another finding was that while synthetic turf may be more dangerous overall, it did not show itself to be more dangerous for specifically wide receivers. We would still suggest, however, the NFL move away from synthetic turf fields and youth teams avoid playing on synthetic turf as well. Overall, looking at the data, we feel confident that we were able to answer both of our questions and additionally provide potential solutions to limit the risk of injury for football players not only in the NFL, but across all ages.", style = "background-color: #DEEBF7")),
       
       ################################################
       # EDA
       tabPanel(
         "Exploratory Data Analysis",
         verbatimTextOutput("Question_1_Data_Summary_Statistics"),
-        p("Seen above are a few descriptive statistics for the data necessary for answering question 1. There are six character variables, including `RosterPosition`, `BodyPart`, `StadiumType`, `Weather`, `PlayType` and `FieldType`. Additionally, there are two numeric variables, including `Temperature` and `Days_Missed`. `Temperature` is a continuous predictor variable, which can be seen in the Exploratory Data Analysis section, and `Days_Missed` is the discrete outcome variable that is being analyzed. Some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. These statistics will play a role in the future narratives."),
+        p("Seen above are a few descriptive statistics for the data necessary for answering question 1. There are six character variables, including `RosterPosition`, `BodyPart`, `StadiumType`, `Weather`, `PlayType` and `FieldType`. Additionally, there are two numeric variables, including `Temperature` and `Days_Missed`. `Temperature` is a continuous predictor variable, which can be seen in the Exploratory Data Analysis section, and `Days_Missed` is the discrete outcome variable that is being analyzed. Some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. These statistics will play a role in the future narratives.", style = "background-color: #DEEBF7"),
         verbatimTextOutput("Question_2_Data_Summary_Statistics"),
-        p("Seen above are a few descriptive statistic for the data necessary for answering question 2. The variables included are the same as for question one, but the only `RosterPosition` is wide receiver. Once again, some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. Notice how values vary compared to the question 1 data. For example, the mean Days_Missed for the wide receiver position is 10.93, whereas for all the positions combined it is almost twice as long at 17.96. This may suggest the wide receivers often miss less time when injured compared to some of the other roster positions.")
+        p("Seen above are a few descriptive statistic for the data necessary for answering question 2. The variables included are the same as for question one, but the only `RosterPosition` is wide receiver. Once again, some important takeaways from this output are the Min, Median, Mean, and Max of each of the numeric variables. Notice how values vary compared to the question 1 data. For example, the mean Days_Missed for the wide receiver position is 10.93, whereas for all the positions combined it is almost twice as long at 17.96. This may suggest the wide receivers often miss less time when injured compared to some of the other roster positions.", style = "background-color: #DEEBF7"),
+        plotOutput("Question1TempHistogram"),
+        p("The only continous variable within each of the datasets of interest is Temperature. A histogram of the variable can be seen above for the question 1 data. Take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is slightly left skewed, but generally takes on a normal distribution. The mean is 65.34 which is relativelty close to the middle of the min, 33, and max 89 degrees fahrenheit.", style = "background-color: #DEEBF7"),
+        plotOutput("Question2TempHistogram"),
+        p("A histogram of the Temperature variable can be seen above for the question 2 data. Once again, take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is a normal distribution. The mean is 64.07 which is almost exactly in the middle of the min, 39, and max 89 degrees fahrenheit.", style = "background-color: #DEEBF7")
       ),
     )
   )
 server <- 
   function(input, output) {
+    output$data_kable <- renderText({data_dictionary})
     output$Question1Plot <- renderPlotly({return(get(input$selectPlot1))})
     output$Question2Plot <- renderPlotly({return(get(input$selectPlot2))})
     output$Question_1_Data_Summary_Statistics <- renderPrint({summary(question1data)})
     output$Question_2_Data_Summary_Statistics <- renderPrint({summary(question2data)})
+    output$Question1TempHistogram <- renderPlot({Question1_Temp_Historgram})
+    output$Question2TempHistogram <- renderPlot({Question2_Temp_Historgram})
   }
 shinyApp(ui = ui, server = server, options = list(display.mode = "showcase"))
 ```
