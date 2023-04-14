@@ -472,10 +472,57 @@ DaysMissed_BodyPart_WR <- question2data %>%
           hovertemplate = 'Frequency: %{y} <br>Body Part: %{x}') %>%
   add_bars() %>%
   layout(title = "Frequency of Days Missed by Body Part",
+         xaxis = list(title = "Body Part"),
+         yaxis = list(title = "Frequency"),
+         showlegend = TRUE,
          legend = list(title=list(text='<b> Days Missed </b>')),
-         xaxis = list(
-           title = "Body Part"),
-         yaxis = list(title = "Frequency"))
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Grouped Bar Chart for FieldType by Days_Missed
@@ -487,10 +534,58 @@ DaysMissed_FieldType_WR <- question2data %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
           hovertemplate = 'Frequency: %{y} <br>Field Type: %{x}') %>%
   add_bars() %>%
-  layout(title = "Frequency of Days Missed by Field Type",
-         xaxis = list(title = "Field Type"),
+  layout(title = "Frequency of Days Missed by Body Part",
+         xaxis = list(title = "Body Part"),
          yaxis = list(title = "Frequency"),
-         legend = list(title=list(text='<b> Days Missed </b>')))
+         showlegend = TRUE,
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Grouped Bar Chart for Weather by Days_Missed
@@ -502,10 +597,58 @@ DaysMissed_Weather_WR <- question2data %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
           hovertemplate = 'Frequency: %{y} <br>Weather: %{x}') %>%
   add_bars() %>%
-  layout(title = "Frequency of Days Missed by Weather",
-         xaxis = list(title = "Weather"),
-         yaxis = list(title = "Frequency"), 
-         legend = list(title=list(text='<b> Days Missed </b>')))
+  layout(title = "Frequency of Days Missed by Body Part",
+         xaxis = list(title = "Body Part"),
+         yaxis = list(title = "Frequency"),
+         showlegend = TRUE,
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Grouped Bar Chart for Play Type by Days_Missed
@@ -517,10 +660,58 @@ DaysMissed_PlayType_WR <- question2data %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal,
           hovertemplate = 'Frequency: %{y} <br>Play Type: %{x}') %>%
   add_bars() %>%
-  layout(title = "Frequency of Days Missed by Play Type",
-         xaxis = list(title = "Play Type"),
+  layout(title = "Frequency of Days Missed by Body Part",
+         xaxis = list(title = "Body Part"),
          yaxis = list(title = "Frequency"),
-         legend = list(title=list(text='<b> Days Missed </b>')))
+         showlegend = TRUE,
+         legend = list(title=list(text='<b> Days Missed </b>')),
+         updatemenus = list(
+           list(
+             type = "buttons",
+             direction = "left",
+             showactive = TRUE,
+             xanchor = "left",
+             yanchor = "top",
+             buttons = list(
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, TRUE, TRUE, TRUE)
+                  ),
+                label = "All"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(TRUE, FALSE, FALSE, FALSE)
+                  ),
+                label = "1-6 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, TRUE, FALSE, FALSE)
+                  ),
+                label = "7 - 27 days"
+                ),
+               list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, TRUE, FALSE)
+                  ),
+                label = "28-41 days"
+                ),
+              list(
+                method = "restyle",
+                args = list(
+                 "visible", list(FALSE, FALSE, FALSE, TRUE)
+                  ),
+                label = "42+ days"
+              )
+           )
+        )
+     )
+  )
 ```
 
 ## Combined Chart & Narrative
@@ -562,7 +753,6 @@ ui <-
         p("Executive Summary: One of the most unfortunate and disliked aspect of being an athlete is the risk of getting injured. Thousands of athletes are injured every single year, and these injuries vary with severity. In this report, the plan is to research how different variables effect the severity of injury in football. The end goal of this analysis is to lower the risk of injury for athletes, and make their lives healthier and easier, along with other stakeholders involved, such as family, teammates, athletic trainers, strength and conditioning coaches, etc. The established data set is detailed below, with emphasis on cleaning and sub-setting variables that are pertinent to the questions, along with a data dictionary that lists all the contents. To get a better understanding of the data sets contents, exploratory data analysis was performed, in addition to the data descriptions. In order to answer the questions of interest, detailed charts were created. Based on these charts, the key findings were that synthetic turf is more dangerous for football players overall, as popularly believed, but this is not the case for every position, Additionally, rainy conditions did not play as big of a role in creating major injuries than is widely believed. We found passing plays to be more dangerous than other plays overall, but kickoffs led to the most severe injuries for wide receivers, and also that injuries to the knee tend to keep football players out for the longest amount of time."),
         p("Background: This dataset was created by the National Football League (NFL) for a Kaggle-based analytics competition named NFL 1st and Future - Analytics. The purpose of this competition was to investigate the relationship between the playing surface and the injury and performance of NFL athletes. The inspiration for the competition was the recent investigations into the higher rate of injuries to NFL players on synthetic turf compared to that on natural turf. As a group, we were interested in sports and health, and this dataset was a reputable intersection of the two. In one of the nation's most profitable, yet dangerous, sports leagues, the risk of investment into a player can be lowered if steps continue to be taken to ensure player safety. While NFL player health is the foremost reason for the creation of this competition and dataset, we believe that conclusions from our analysis can be beneficial to the youth ranks of football as well. Keeping the children safe on the field was an important motivation for our analysis.  Our questions were stemmed from the NFL's own questions about safety. Our first question was an obvious one to come to. We wanted to explore all the variables in the dataset to find which ones were contributing most to injuries, especially severe ones that are career and sometimes life changing. Our second question was derived more specifically as we wanted to look into one of the NFL's most injury-prone positions-- Wide Receivers. This position group are some of the highest paid in the league and also one of the positions that are the most affected long-term by injuries as speed, agility, and sharpness are absolute keys to their success. These factors led us to focusing an analysis on just the wide receivers."),
         p("Questions: 1. Which conditions are linked to the most severe injuries? 
-
           2. Which conditions are most/least linked to WR injuries?")),
       
       ################################################
@@ -600,7 +790,6 @@ If our stakeholders aim to ensure the quality and health of athletes, we should 
       ),
     )
   )
-
 server <- 
   function(input, output) {
     output$Question1Plot <- renderPlotly({return(get(input$selectPlot1))})
@@ -608,6 +797,5 @@ server <-
     output$Question_1_Data_Summary_Statistics <- renderPrint({summary(question1data)})
     output$Question_2_Data_Summary_Statistics <- renderPrint({summary(question2data)})
   }
-
 shinyApp(ui = ui, server = server, options = list(display.mode = "showcase"))
 ```
