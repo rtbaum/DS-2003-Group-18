@@ -783,8 +783,19 @@ If our stakeholders aim to ensure the quality and health of athletes, we should 
         plotOutput("Question2TempHistogram"),
         p("A histogram of the Temperature variable can be seen above for the question 2 data. Once again, take note of the wide range of temperatures as well as the most frequent temperature around 70 degrees fahrenheit. The data is a normal distribution. The mean is 64.07 which is almost exactly in the middle of the min, 39, and max 89 degrees fahrenheit.", style = "background-color: #DEEBF7")
       ),
+      ################################################
+      # Sources
+      tabPanel(
+        "Sources",
+        verbatimTextOutput("Sources"),
+        p("Shiny Documentation: https://shiny.rstudio.com/reference/shiny/latest/", style = "background-color: #DEEBF7"),
+        p("Shiny Cheatsheet: https://shiny.rstudio.com/images/shiny-cheatsheet.pdf", style = "background-color: #DEEBF7"),
+        p("Dataset: https://www.kaggle.com/code/aleksandradeis/nfl-injury-analysis/data", style = "background-color: #DEEBF7"),
+        p("Class Notes were heavily cited during the creation of this dashboard.", style = "background-color: #DEEBF7")
+      )
     )
   )
+  
 server <- 
   function(input, output) {
     output$data_kable <- renderText({data_dictionary})
