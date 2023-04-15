@@ -198,7 +198,7 @@ DaysMissed_BodyPart_AllPositions <- question1data %>%
   mutate(fType = as.factor(BodyPart)) %>%
   count(fType, Days_Missed) %>%
   plot_ly(x = ~fType, y = ~n, color = ~Days_Missed, colors = pal, 
-    hovertemplate = 'Days Missed: %{color} <br>Frequency: %{y} <br>Body Part: %{x}') %>%
+    hovertemplate = '<br>Frequency: %{y} <br>Body Part: %{x}') %>%
   add_bars() %>%
   layout(title = "Frequency of Days Missed by Body Part",
          xaxis = list(title = "Body Part"),
